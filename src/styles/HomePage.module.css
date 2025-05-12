@@ -1,0 +1,164 @@
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  color: var(--text-color-primary, #333);
+}
+
+/* Hero Section */
+.heroSection {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color-light, #79bbff) 0%,
+    var(--primary-color, #007bff) 100%
+  );
+  color: white;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.heroTitle {
+  font-size: 2.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.heroSubtitle {
+  font-size: 1.3rem;
+  margin-bottom: 30px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.ctaButton,
+.ctaButtonSecondary {
+  display: inline-flex; /* Para alinear el icono con el texto */
+  align-items: center; /* Para alinear el icono con el texto */
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease;
+}
+
+.ctaButton {
+  background-color: var(
+    --accent-color,
+    #ffc107
+  ); /* Un color de acento llamativo */
+  color: var(--text-color-dark, #212529);
+}
+
+.ctaButton:hover {
+  background-color: var(--accent-color-dark, #e0a800);
+  transform: translateY(-2px);
+}
+
+/* Features Section */
+.featuresSection {
+  padding: 50px 20px;
+  width: 100%;
+  max-width: 1200px; /* Limita el ancho para mejor legibilidad */
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 2.2rem;
+  margin-bottom: 40px;
+  /* color: #2c3e50; */ /* Azul pizarra oscuro, puede ser muy oscuro si el fondo no es muy claro */
+  color: #b5b1b1; /* Un gris oscuro, pero no tan intenso como el anterior */
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.featureCard {
+  background-color: var(--background-color-light, #fff);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.featureIcon {
+  font-size: 3rem;
+  color: var(--primary-color, #007bff);
+  margin-bottom: 20px;
+}
+
+.featureTitle {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: var(--text-color-primary, #333);
+}
+
+.featureDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-color-secondary, #555);
+}
+
+.futureFeaturesSection {
+  padding: 50px 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Call to Action Section */
+.callToActionSection {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: var(--background-color-secondary, #f8f9fa);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ctaText {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaButtonSecondary {
+  background-color: var(--primary-color, #007bff);
+  color: white;
+  border: 2px solid transparent;
+}
+
+.ctaButtonSecondary:hover {
+  background-color: var(--primary-color-dark, #0056b3);
+  transform: translateY(-2px);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 30px 20px;
+  background-color: var(--text-color-dark, #343a40);
+  color: var(--text-color-light, #f8f9fa);
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.9rem;
+}
