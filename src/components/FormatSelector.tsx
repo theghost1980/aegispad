@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import detailsFormat from "../assets/formats/detalle.png";
+import simpleFormat from "../assets/formats/simple.png";
 import { useArticleStore, type FormatOption } from "../stores/articleStore";
 import styles from "../styles/FormatSelector.module.css";
 import { MarkdownPreview } from "./MarkdownPreview";
@@ -52,11 +54,6 @@ const FormatSelector: React.FC = () => {
       {title && (
         <h2 className={styles.articleTitlePreview}>Revisando: {title}</h2>
       )}
-      <h3>Selecciona el Formato de Presentación</h3>
-      <p className={styles.instructions}>
-        Elige cómo deseas combinar tu texto original con la traducción. La
-        previsualización se actualizará automáticamente.
-      </p>
 
       <div className={styles.optionsContainer}>
         <label className={styles.optionLabel}>
@@ -68,7 +65,14 @@ const FormatSelector: React.FC = () => {
             onChange={handleFormatChange}
             disabled={!translatedMarkdown} // Deshabilitar si no hay traducción
           />
-          Simple (Original arriba, Traducción abajo)
+          <div className={styles.optionContent}>
+            <img
+              src={simpleFormat}
+              alt="Formato Simple"
+              className={styles.optionImage}
+            />
+            <span>Simple</span> {/* Texto más corto */}
+          </div>
         </label>
         <label className={styles.optionLabel}>
           <input
@@ -79,7 +83,14 @@ const FormatSelector: React.FC = () => {
             onChange={handleFormatChange}
             disabled={!translatedMarkdown} // Deshabilitar si no hay traducción
           />
-          Detalles (Original arriba, Traducción en sección colapsable)
+          <div className={styles.optionContent}>
+            <img
+              src={detailsFormat}
+              alt="Formato Detalles"
+              className={styles.optionImage}
+            />
+            <span>Detalles</span> {/* Texto más corto */}
+          </div>
         </label>
       </div>
 

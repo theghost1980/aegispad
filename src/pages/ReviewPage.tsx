@@ -16,13 +16,12 @@ const ReviewPage: React.FC = () => {
   const {
     title,
     translatedTitle,
-    getCombinedMarkdown,
+    combinedMarkdown,
     setCurrentEditorStep,
     currentEditorStep,
   } = useArticleStore();
 
   const [isPreviewVisible, setIsPreviewVisible] = useState(true);
-  const combinedMarkdown = getCombinedMarkdown(); // Obtener el markdown combinado
 
   useEffect(() => {
     // Asegurarse de que el step sea el correcto al cargar esta página

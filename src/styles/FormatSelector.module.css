@@ -15,9 +15,11 @@
   border-bottom: 1px solid var(--border-color-light, #eee);
 }
 
-.formatSelectorContainer h3 {
-  margin-top: 0;
+.formatSelectionHeader {
+  font-size: 1.4em;
   color: var(--text-color-primary, #333);
+  margin-right: 15px;
+  white-space: nowrap;
 }
 
 .instructions {
@@ -28,11 +30,12 @@
 
 .optionsContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: 15px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   padding: 15px;
-  max-height: 250px; /* Altura máxima antes de mostrar scroll */
+  max-height: 350px; /* Altura máxima antes de mostrar scroll */
   overflow-y: auto; /* Scroll vertical si el contenido excede max-height */
   background-color: var(--background-color-secondary, #f8f9fa);
   border-radius: 6px;
@@ -41,30 +44,49 @@
 .optionLabel {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 1rem;
+  gap: 8px;
   color: var(--text-color-primary, #333); /* Asegura que el texto sea visible */
   cursor: pointer;
-  padding: 8px;
+  padding: 10px 15px;
+  border: 2px solid var(--border-color-light, #ccc);
   border-radius: 4px;
-  transition: background-color 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  background-color: var(--background-color-light, #fff);
 }
 
 .optionLabel:hover {
-  background-color: var(--background-color-tertiary, #e9ecef);
+  background-color: var(--background-color-hover-light, #f0f0f0);
+  border-color: var(--border-color, #bbb);
 }
 
 .optionLabel input[type="radio"] {
-  margin-right: 8px;
-  accent-color: var(--primary-color, #007bff); /* Estiliza el radio button */
+  margin-right: 0; /* El gap en .optionLabel maneja el espacio */
+}
+
+.optionLabel input[type="radio"]:checked + .optionContent {
+  /* Estilo para el contenido cuando el radio button está seleccionado */
+}
+
+.optionLabel input[type="radio"]:checked {
+  /* Estilo para el radio button seleccionado */
+}
+
+.optionContent {
+  /* Contenedor para la imagen y el texto dentro de la etiqueta */
+  display: flex;
+  flex-direction: column; /* Imagen arriba, texto abajo */
+  align-items: center;
+  gap: 5px; /* Espacio entre imagen y texto */
+  font-size: 0.9rem; /* Tamaño del texto de la opción */
 }
 
 .previewSection {
-  margin-top: 30px;
-  border: 1px solid var(--border-color, #ddd);
   border-radius: 6px;
-  padding: 15px;
-  min-height: 200px; /* Para que se vea algo incluso si el contenido es corto */
+  background-color: var(--background-color-light, #fff);
+  margin-top: 15px; /* Espacio desde optionsContainer */
+  margin-bottom: 15px; /* Espacio antes de navigationButtons */
+  overflow-y: auto; /* Permite scroll si la previsualización es muy larga */ /* Mantener scroll aquí */
+  max-height: 45vh; /* Limita la altura de la previsualización, ajusta según necesites */
 }
 
 .previewSection h4 {
@@ -76,6 +98,12 @@
 .noFormatSelected {
   color: var(--text-color-secondary, #777);
   font-style: italic;
+}
+
+.optionImage {
+  width: 250px; /* Tamaño del placeholder de imagen */
+  height: 250px; /* Tamaño del placeholder de imagen */
+  object-fit: contain; /* Asegura que la imagen se ajuste sin distorsionarse */
 }
 
 .navigationButtons {

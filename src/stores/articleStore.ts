@@ -24,8 +24,6 @@ interface ArticleState {
   setSelectedFormatOption: (option: FormatOption | null) => void;
   setCurrentEditorStep: (step: EditorStep) => void;
   resetArticleState: () => void;
-  getCombinedMarkdown: () => string;
-  // Internal helper (not directly called by components usually)
   _updateCombinedMarkdown: () => void;
 }
 
@@ -44,8 +42,14 @@ export const useArticleStore = create<ArticleState>()(
     (set, get) => ({
       ...initialState,
 
-      setTitle: (title) => set({ title, translatedTitle: "" }),
-      setTranslatedTitle: (translatedTitle) => set({ translatedTitle }),
+      setTitle: (title) => {
+        set({ title, translatedTitle: "" }); // Limpiar título traducido si el original cambia
+        get()._updateCombinedMarkdown();
+      },
+      setTranslatedTitle: (translatedTitle) => {
+        set({ translatedTitle });
+        get()._updateCombinedMarkdown();
+      },
 
       setOriginalMarkdown: (md) => {
         set({ originalMarkdown: md });
@@ -64,13 +68,14 @@ export const useArticleStore = create<ArticleState>()(
 
       setCurrentEditorStep: (step) => set({ currentEditorStep: step }),
 
-      getCombinedMarkdown: () => {
+      _updateCombinedMarkdown: () => {
         const {
           title,
           translatedTitle,
           originalMarkdown,
           translatedMarkdown,
           selectedFormatOption,
+          // No necesitamos combinedMarkdown aquí ya que lo vamos a setear
         } = get();
 
         if (
@@ -79,10 +84,9 @@ export const useArticleStore = create<ArticleState>()(
           !title &&
           !translatedTitle
         )
-          return "";
+          return set({ combinedMarkdown: "" });
 
-        // Caso base: solo hay markdown original (o no se ha traducido/seleccionado formato)
-        // y/o título original.
+        // Lógica para construir el combinedMarkdown
         let combined = "";
         const titlePart = title ? `# ${title}\n` : "";
         // Añadir el título traducido solo si existe.
@@ -97,40 +101,18 @@ export const useArticleStore = create<ArticleState>()(
         if (translatedMarkdown && selectedFormatOption) {
           const translatedBody = translatedMarkdown || "";
           if (selectedFormatOption === "simple") {
+            // Formato simple: Original, separador, Traducción (con títulos)
             combined = `${titlePart}${translatedTitlePart}${originalBody}\n\n---\n\n${translatedBody}`;
           } else if (selectedFormatOption === "details") {
-            combined = `${titlePart}${translatedTitlePart}<details>\n<summary>Original Text</summary>\n\n${originalBody}\n</details>\n\n${translatedBody}`;
+            // Formato details: Títulos, luego Original, y la Traducción dentro de <details>
+            const summaryText = "Traducción AegisPad";
+            combined = `${titlePart}${translatedTitlePart}${originalBody}\n\n<details>\n<summary>${summaryText}</summary>\n\n${translatedBody}\n</details>`;
           }
         } else {
-          // Si no hay formato seleccionado o no hay traducción del cuerpo,
-          // mostrar título original, título traducido (si existe) y cuerpo original.
+          // Si no hay formato seleccionado o no hay traducción del cuerpo, mostrar títulos y cuerpo original.
           combined = `${titlePart}${translatedTitlePart}${originalBody}`;
         }
-        return combined;
-      },
-
-      _updateCombinedMarkdown: () => {
-        const { originalMarkdown, translatedMarkdown, selectedFormatOption } =
-          get();
-        let newCombinedMarkdown = originalMarkdown; // Por defecto, si no hay traducción o formato
-
-        if (translatedMarkdown) {
-          if (selectedFormatOption === "simple") {
-            newCombinedMarkdown = `${originalMarkdown}\n\n---\n\n${translatedMarkdown}`;
-          } else if (selectedFormatOption === "details") {
-            // TODO: Obtener el idioma de destino para el summary, por ahora hardcodeado
-            const summaryText = "TR AegisPad";
-            newCombinedMarkdown = `${originalMarkdown}\n\n<details>\n<summary>${summaryText}</summary>\n\n${translatedMarkdown}\n</details>`;
-          } else {
-            // Si no hay formato seleccionado pero hay traducción, podríamos decidir un default o dejar solo el original.
-            // Por ahora, si hay traducción pero no formato, mostramos solo el original.
-            // O podríamos hacer que 'simple' sea el default si hay traducción.
-            // Para este caso, si no hay formato, y hay traducción, dejemos el original.
-            // El usuario debe seleccionar un formato para ver la combinación.
-            newCombinedMarkdown = originalMarkdown;
-          }
-        }
-        set({ combinedMarkdown: newCombinedMarkdown });
+        set({ combinedMarkdown: combined });
       },
 
       resetArticleState: () => {
