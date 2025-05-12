@@ -39,16 +39,6 @@ export const HiveAccountSuggestions: React.FC<HiveAccountSuggestionsProps> = ({
     setIsVisible(true);
   };
 
-  useEffect(() => {
-    if (anchorRef?.current) {
-      const rect = anchorRef.current.getBoundingClientRect();
-      setPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-      });
-    }
-  }, [anchorRef, suggestions]);
-
   const handleSelect = (account: string) => {
     if (onSelect) {
       onSelect(account);
@@ -59,10 +49,7 @@ export const HiveAccountSuggestions: React.FC<HiveAccountSuggestionsProps> = ({
   if (!isVisible || suggestions.length === 0) return null;
 
   return (
-    <div
-      className={styles.suggestionContainer}
-      style={{ top: position.top, left: position.left }}
-    >
+    <div className={styles.suggestionContainer}>
       <ul className={styles.suggestionList}>
         {suggestions.map((account) => (
           <li

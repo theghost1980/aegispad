@@ -1,10 +1,13 @@
 .suggestionContainer {
   position: absolute;
+  top: 100%; /* Posiciona el inicio del contenedor justo debajo del elemento ancla (el input group) */
+  left: 0; /* Alinea a la izquierda del elemento ancla */
+  width: 100%; /* Hace que el contenedor de sugerencias tenga el mismo ancho que el input group */
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  z-index: 1000;
-  max-width: 300px;
+  z-index: 1060; /* Un z-index alto, por encima del modal de confirmación (1050) y header (1000) */
+  /* max-width: 300px; */ /* Comentamos esto, el width: 100% debería manejarlo mejor o el JS si es necesario */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 

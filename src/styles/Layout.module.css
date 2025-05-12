@@ -46,7 +46,6 @@
 .mainContent {
   flex-grow: 1; /* Permite que el main ocupe el espacio restante */
   overflow-y: auto; /* Permite el scroll vertical SI el contenido excede la altura */
-  padding: 20px; /* Añade un poco de espacio alrededor del contenido principal */
   display: flex; /* Para que el hijo directo (ej. editorLayoutContainer) pueda usar flex-grow */
   flex-direction: column; /* Los hijos se apilan verticalmente */
 }
