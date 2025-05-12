@@ -1,13 +1,13 @@
 import React from "react";
-import EditorStepper from "../components/EditorStepper"; // Importamos el stepper
+import EditorStepper from "../components/EditorStepper";
 import FormatSelector from "../components/FormatSelector";
 import { MarkdownEditorWithTranslation } from "../components/MarkdownEditorWithTranslation";
 import { useArticleStore } from "../stores/articleStore";
-import styles from "../styles/EditorPage.module.css"; // Estilos para esta página
+import styles from "../styles/EditorPage.module.css";
 
 const EditorPage: React.FC = () => {
   const currentEditorStep = useArticleStore((state) => state.currentEditorStep);
-  const title = useArticleStore((state) => state.title); // Para el título del artículo
+  const title = useArticleStore((state) => state.title);
   const setTitle = useArticleStore((state) => state.setTitle);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,8 +16,7 @@ const EditorPage: React.FC = () => {
 
   return (
     <div className={styles.editorPageContainer}>
-      <EditorStepper /> {/* El stepper siempre visible en esta página */}
-      {/* Campo para el título del artículo, visible en todas las etapas del editor */}
+      <EditorStepper />
       <div className={styles.titleInputContainer}>
         <input
           type="text"
@@ -31,7 +30,6 @@ const EditorPage: React.FC = () => {
         <MarkdownEditorWithTranslation />
       )}
       {currentEditorStep === "SELECTING_FORMAT" && <FormatSelector />}
-      {/* Más adelante aquí irá el componente para REVIEWING_PUBLISHING cuando se navegue a /editor/review */}
     </div>
   );
 };
