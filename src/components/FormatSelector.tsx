@@ -29,8 +29,8 @@ const FormatSelector: React.FC = () => {
   };
 
   const handleNextStep = () => {
-    setCurrentEditorStep("REVIEWING_PUBLISHING");
-    navigate("/editor/review"); // Navegar a la nueva página de revisión
+    setCurrentEditorStep("REVIEWING");
+    navigate("/editor/review");
   };
 
   const handleGoBackToEditor = () => {

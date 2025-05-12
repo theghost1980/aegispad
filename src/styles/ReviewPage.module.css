@@ -1,0 +1,170 @@
+.reviewPageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  /* Si el EditorStepper es absoluto, el padding de la página principal (EditorPage.module.css)
+     ya debería dar espacio. Si no, ajusta el padding-top aquí. */
+}
+
+.titleDisplayContainer {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.titleDisplayContainer h1 {
+  font-size: 1.8rem;
+  color: var(--text-color-primary, #333);
+  margin-bottom: 5px;
+}
+
+.titleDisplayContainer h2 {
+  font-size: 1.3rem;
+  color: var(--text-color-secondary, #555);
+}
+
+.contentArea {
+  display: flex;
+  gap: 15px;
+  position: relative; /* Para el botón de toggle absoluto */
+  height: calc(
+    100vh - 280px
+  ); /* Ajusta según la altura del header, stepper, títulos y menú de acciones */
+  min-height: 400px; /* Altura mínima para el contenido */
+}
+
+.rawMarkdownPane,
+.previewPane {
+  flex: 1;
+  border: 1px solid var(--border-color-light, #ddd);
+  border-radius: 8px;
+  overflow: hidden; /* Para que el textarea y preview no se desborden */
+  display: flex; /* Para que el textarea o preview ocupe todo el espacio */
+  flex-direction: column;
+  background-color: var(--background-color-secondary, #f9f9f9);
+}
+
+.markdownTextarea {
+  flex-grow: 1;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  background-color: transparent;
+  color: var(--text-color-primary, #333);
+}
+
+.previewPane {
+  padding: 15px;
+  overflow-y: auto; /* Scroll para la previsualización */
+}
+
+.rawMarkdownPane.fullWidth {
+  flex-grow: 2; /* Ocupa más espacio si es el único visible */
+}
+
+.togglePreviewButton {
+  position: absolute;
+  top: 50%;
+  left: 50%; /* Inicialmente en el medio */
+  transform: translate(-50%, -50%);
+  background-color: var(--primary-color, #007bff);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease, left 0.3s ease; /* Transición para 'left' */
+}
+
+/* Ajustar posición del botón cuando un panel está oculto */
+.rawMarkdownPane.fullWidth + .togglePreviewButton {
+  left: calc(100% - 25px); /* Mover a la derecha del panel de markdown */
+}
+
+.togglePreviewButton:hover {
+  background-color: var(--primary-color-dark, #0056b3);
+}
+
+.actionMenuContainer {
+  display: flex;
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  gap: 15px;
+  padding: 15px 0;
+  margin-top: 10px;
+  border-top: 1px solid var(--border-color-light, #eee);
+}
+
+.actionButton {
+  padding: 8px 15px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 6px;
+  background-color: var(--background-color-light, #fff);
+  color: var(--text-color-primary, #333);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.actionButton:hover {
+  background-color: var(--background-color-tertiary, #e9ecef);
+  border-color: var(--border-color-dark, #bbb);
+}
+
+.actionButtonIcon {
+  font-size: 1.2em; /* Icono de tamaño mediano */
+}
+
+.actionButtonText {
+  font-size: 0.85em; /* Texto pequeño */
+}
+
+.publishButton {
+  background-color: var(--primary-color, #007bff);
+  color: white;
+  border-color: var(--primary-color, #007bff);
+}
+
+.publishButton:hover {
+  background-color: var(--primary-color-dark, #0056b3);
+  border-color: var(--primary-color-dark, #0056b3);
+}
+
+/* Reutilizar estilos de botones de navegación si es necesario */
+.navigationButtons {
+  display: flex;
+  justify-content: space-between; /* O solo flex-start si solo hay "Volver" */
+  margin-top: 20px;
+}
+
+.navButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  background-color: var(--secondary-button-bg, #6c757d);
+  color: white;
+}
+.backButton:hover {
+  background-color: var(--secondary-button-hover-bg, #5a6268);
+}

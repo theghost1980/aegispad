@@ -9,6 +9,7 @@ import FormatSelectionPage from "./pages/FormatSelectionPage";
 import HomePage from "./pages/Home";
 import { Login } from "./pages/Login";
 import ProfilePage from "./pages/Profile";
+import ReviewPage from "./pages/ReviewPage";
 import { useServerStatusStore } from "./stores/serverStatusStore";
 
 function App() {
@@ -50,6 +51,14 @@ function App() {
             element={
               <PrivateRoute>
                 <FormatSelectionPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/editor/review" // Nueva ruta
+            element={
+              <PrivateRoute>
+                <ReviewPage />
               </PrivateRoute>
             }
           />

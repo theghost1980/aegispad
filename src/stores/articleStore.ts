@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 export type EditorStep =
   | "WRITING_TRANSLATING"
   | "SELECTING_FORMAT"
-  | "REVIEWING_PUBLISHING";
+  | "REVIEWING";
 
 export type FormatOption = "simple" | "details"; // simple: arriba/abajo, details: original arriba, traducción en <details>
 
