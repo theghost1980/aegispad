@@ -57,8 +57,12 @@ export function MarkdownEditorWithTranslation() {
     setOriginalMarkdown,
     setTranslatedMarkdown,
     setCurrentEditorStep,
+    title: storeTitle,
+    setTitle: setStoreTitle,
+    setTranslatedTitle,
     originalMarkdown: storeOriginalMarkdown,
     translatedMarkdown: storeTranslatedMarkdown,
+    translatedTitle: storeTranslatedTitle,
   } = useArticleStore();
 
   const DEBOUNCE_DELAY = 500;
@@ -77,6 +81,7 @@ export function MarkdownEditorWithTranslation() {
           }
           return;
         }
+        const currentTitle = useArticleStore.getState().title;
         showLoader("Traduciendo texto...");
         clearError();
         let originalTree: Root | null = null;
@@ -133,6 +138,28 @@ export function MarkdownEditorWithTranslation() {
             // Solo si la traducción y reinserción son exitosas, actualizamos el store y notificamos
             setOriginalMarkdown(markdownText);
             setTranslatedMarkdown(finalTranslatedMarkdown);
+
+            if (currentTitle) {
+              try {
+                const [translatedTitleText] = await translateText(
+                  [currentTitle],
+                  preferredSourceLanguage.code,
+                  preferredTargetLanguage.code
+                );
+                if (translatedTitleText) {
+                  setTranslatedTitle(translatedTitleText);
+                  console.log(
+                    "DEBUG EDITOR: Translated title:",
+                    translatedTitleText
+                  );
+                }
+              } catch (titleErr) {
+                console.error("Error translating title:", titleErr);
+                // Opcional: notificar al usuario sobre el error en la traducción del título
+                // setError(createAppError("Error al traducir el título.", ...));
+              }
+            }
+
             const duration = translationTimer.stop();
             if (duration !== null) {
               const formattedTime = translationTimer.getFormattedDuration();
@@ -166,8 +193,9 @@ export function MarkdownEditorWithTranslation() {
                 true
               )
             );
-            setTranslatedText(errorMsg); // Mostrar error en la preview
-            setTranslatedMarkdown(""); // Limpiar traducción en el store
+            setTranslatedText(errorMsg);
+            setTranslatedMarkdown("");
+            setTranslatedTitle("");
           }
         } catch (err: any) {
           translationTimer.stop();
@@ -189,6 +217,7 @@ export function MarkdownEditorWithTranslation() {
           setError(detailedError);
           setTranslatedText(`Error al traducir: ${detailedError.message}`);
           setTranslatedMarkdown("");
+          setTranslatedTitle("");
         } finally {
           hideLoader();
           setDebounceProgress(0);
@@ -209,6 +238,7 @@ export function MarkdownEditorWithTranslation() {
       hideLoader,
       setOriginalMarkdown,
       setTranslatedMarkdown,
+      setTranslatedTitle,
       showSuccess,
     ]
   );
@@ -227,6 +257,11 @@ export function MarkdownEditorWithTranslation() {
       "DEBUG EDITOR: markdownText state updated to:",
       event.target.value
     );
+  };
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStoreTitle(event.target.value);
+    // setTranslatedTitle(""); // Opcional: Limpiar título traducido cuando el original cambia
   };
 
   const handleTranslateButtonClick = () => {
@@ -538,6 +573,15 @@ export function MarkdownEditorWithTranslation() {
           !isTranslationPaneVisible ? styles.editorPaneFullWidth : ""
         }`}
       >
+        <div className={styles.titleInputContainer}>
+          <input
+            type="text"
+            value={storeTitle}
+            onChange={handleTitleChange}
+            placeholder="Título de tu artículo..."
+            className={styles.titleInput}
+          />
+        </div>
         <div className={styles.paneHeader}>
           <MarkdownToolbar
             onBold={handleBold}
@@ -607,6 +651,11 @@ export function MarkdownEditorWithTranslation() {
             )}
           </div>
           <div className={styles.translationOutput}>
+            {storeTranslatedTitle && (
+              <h2 className={styles.translatedTitlePreview}>
+                {storeTranslatedTitle}
+              </h2>
+            )}
             {translatedText ? (
               <MarkdownPreview markdown={translatedText} />
             ) : markdownText ? (

@@ -21,6 +21,26 @@
   color: var(--color-primary);
 }
 
+.titleInputContainer {
+  margin-bottom: 15px; /* Espacio antes de la barra de herramientas */
+  width: 100%; /* Ocupa el ancho del editorPane */
+}
+
+.titleInput {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1.4em; /* Título más grande */
+  border: 1px solid var(--border-color-light, #ccc);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.translatedTitlePreview {
+  font-size: 1.5em; /* O el tamaño que prefieras */
+  color: var(--text-color-primary, #333);
+  margin-bottom: 10px;
+}
+
 .editorPane,
 .translationPane {
   flex: 1; /* Ambos paneles ocupan el mismo espacio disponible */

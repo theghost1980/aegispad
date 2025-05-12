@@ -10,6 +10,7 @@ export type FormatOption = "simple" | "details"; // simple: arriba/abajo, detail
 
 interface ArticleState {
   title: string;
+  translatedTitle: string;
   originalMarkdown: string;
   translatedMarkdown: string;
   selectedFormatOption: FormatOption | null;
@@ -17,17 +18,20 @@ interface ArticleState {
   currentEditorStep: EditorStep;
   // Actions
   setTitle: (title: string) => void;
+  setTranslatedTitle: (title: string) => void;
   setOriginalMarkdown: (md: string) => void;
   setTranslatedMarkdown: (md: string) => void;
   setSelectedFormatOption: (option: FormatOption | null) => void;
   setCurrentEditorStep: (step: EditorStep) => void;
   resetArticleState: () => void;
+  getCombinedMarkdown: () => string;
   // Internal helper (not directly called by components usually)
   _updateCombinedMarkdown: () => void;
 }
 
 const initialState = {
   title: "",
+  translatedTitle: "",
   originalMarkdown: "",
   translatedMarkdown: "",
   selectedFormatOption: null,
@@ -40,7 +44,8 @@ export const useArticleStore = create<ArticleState>()(
     (set, get) => ({
       ...initialState,
 
-      setTitle: (title) => set({ title }),
+      setTitle: (title) => set({ title, translatedTitle: "" }),
+      setTranslatedTitle: (translatedTitle) => set({ translatedTitle }),
 
       setOriginalMarkdown: (md) => {
         set({ originalMarkdown: md });
@@ -58,6 +63,51 @@ export const useArticleStore = create<ArticleState>()(
       },
 
       setCurrentEditorStep: (step) => set({ currentEditorStep: step }),
+
+      getCombinedMarkdown: () => {
+        const {
+          title,
+          translatedTitle,
+          originalMarkdown,
+          translatedMarkdown,
+          selectedFormatOption,
+        } = get();
+
+        if (
+          !originalMarkdown &&
+          !translatedMarkdown &&
+          !title &&
+          !translatedTitle
+        )
+          return "";
+
+        // Caso base: solo hay markdown original (o no se ha traducido/seleccionado formato)
+        // y/o título original.
+        let combined = "";
+        const titlePart = title ? `# ${title}\n` : "";
+        // Añadir el título traducido solo si existe.
+        const translatedTitlePart = translatedTitle
+          ? `## ${translatedTitle}\n\n`
+          : title
+          ? "\n"
+          : "";
+
+        const originalBody = originalMarkdown || "";
+
+        if (translatedMarkdown && selectedFormatOption) {
+          const translatedBody = translatedMarkdown || "";
+          if (selectedFormatOption === "simple") {
+            combined = `${titlePart}${translatedTitlePart}${originalBody}\n\n---\n\n${translatedBody}`;
+          } else if (selectedFormatOption === "details") {
+            combined = `${titlePart}${translatedTitlePart}<details>\n<summary>Original Text</summary>\n\n${originalBody}\n</details>\n\n${translatedBody}`;
+          }
+        } else {
+          // Si no hay formato seleccionado o no hay traducción del cuerpo,
+          // mostrar título original, título traducido (si existe) y cuerpo original.
+          combined = `${titlePart}${translatedTitlePart}${originalBody}`;
+        }
+        return combined;
+      },
 
       _updateCombinedMarkdown: () => {
         const { originalMarkdown, translatedMarkdown, selectedFormatOption } =
