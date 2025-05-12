@@ -1,0 +1,52 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo semitransparente más oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; /* Muy alto para estar por encima de todo */
+  backdrop-filter: blur(3px); /* Efecto blur para el fondo */
+}
+
+.loaderContainer {
+  background-color: rgba(
+    50,
+    50,
+    50,
+    0.85
+  ); /* Fondo del contenedor del loader oscuro y semitransparente */
+  padding: 30px 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logoSpin {
+  width: 70px; /* Ajusta el tamaño según tu logo */
+  height: 70px;
+  animation: spin 1.5s linear infinite;
+  margin-bottom: 20px;
+  border-radius: 50%;
+}
+
+.message {
+  color: #f0f0f0; /* Color de texto claro para contraste */
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

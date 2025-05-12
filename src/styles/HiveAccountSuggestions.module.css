@@ -1,0 +1,32 @@
+.suggestionContainer {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 1000;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.suggestionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.suggestionItem {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #666;
+}
+
+.suggestionItem:hover {
+  background-color: #f0f0f0;
+}
+
+.suggestionFooter {
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  color: #666;
+  border-top: 1px solid #eee;
+}

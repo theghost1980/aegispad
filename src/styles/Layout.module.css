@@ -1,0 +1,52 @@
+@import "./colors.module.css";
+
+.container {
+  background-color: var(--color-bg); /* fondo base */
+  color: var(--color-text);
+  font-family: "Inter", sans-serif;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.header {
+  background-color: var(--color-dark);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: var(--color-accent);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.nav a {
+  color: var(--color-text);
+  margin-left: 1rem;
+  text-decoration: none;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.userInfo {
+  font-size: 0.875rem;
+  color: var(--color-accent);
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}

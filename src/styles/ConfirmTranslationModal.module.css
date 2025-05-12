@@ -1,0 +1,150 @@
+/* src/styles/ConfirmTranslationModal.module.css */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.65
+  ); /* Un poco más oscuro para mejor contraste */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; /* Asegurar que esté por encima de otros elementos como OperationLoader */
+  backdrop-filter: blur(3px); /* Efecto de desenfoque sutil */
+}
+
+.modalContent {
+  background-color: var(
+    --background-color-light,
+    #2c2c2e
+  ); /* Color de fondo oscuro por defecto */
+  color: var(
+    --text-color-primary,
+    #f0f0f0
+  ); /* Color de texto claro por defecto */
+  padding: 25px 30px;
+  border-radius: 12px; /* Bordes más redondeados */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  width: 90%;
+  max-width: 480px; /* Un poco más estrecho */
+  text-align: center;
+  border: 1px solid var(--border-color-medium, #444);
+  animation: fadeInScale 0.3s ease-out; /* Animación de entrada */
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modalText {
+  font-size: 1.05rem; /* Ligeramente más pequeño para que quepa mejor */
+  margin-bottom: 28px;
+  line-height: 1.65;
+  color: var(--text-color-secondary, #d1d1d1);
+}
+
+.modalActions {
+  display: flex;
+  flex-direction: column; /* Apilar en móvil */
+  gap: 15px;
+}
+
+.confirmCancelGroup {
+  display: flex;
+  gap: 12px;
+  width: 100%; /* Ocupar todo el ancho en la columna */
+}
+
+.confirmCancelGroup > .modalButton {
+  flex-grow: 1; /* Para que los botones ocupen el espacio disponible */
+}
+
+.modalButton {
+  padding: 12px 20px; /* Un poco más de padding */
+  border: none;
+  border-radius: 8px; /* Bordes más redondeados para botones */
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600; /* Un poco más de peso */
+  transition: background-color 0.2s ease, transform 0.1s ease,
+    box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrar contenido del botón */
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modalButton:hover {
+  opacity: 0.95;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.modalButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.modalButton svg {
+  font-size: 1.1em; /* Iconos un poco más grandes */
+}
+
+.helpButton {
+  background-color: var(--color-info-muted, #3a3a3c);
+  color: var(--color-info, #5eacff);
+  border: 1px solid var(--color-info-muted, #48484a);
+  width: 100%; /* Ocupar todo el ancho en la columna */
+}
+
+.helpButton:hover {
+  background-color: var(--color-info, #5eacff);
+  color: var(--background-color-light, #2c2c2e);
+}
+
+.cancelButton {
+  background-color: var(--color-secondary-muted, #48484a);
+  color: var(--text-color-secondary, #c7c7cc);
+  border: 1px solid var(--border-color-dark, #545458);
+}
+
+.cancelButton:hover {
+  background-color: var(--color-secondary, #58585a);
+}
+
+.confirmButton {
+  background-color: var(--color-primary, #0a84ff);
+  color: white;
+}
+
+.confirmButton:hover {
+  background-color: var(--color-primary-dark, #007aff);
+}
+
+/* Media query para pantallas más grandes */
+@media (min-width: 480px) {
+  .modalActions {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .helpButton {
+    width: auto; /* Volver a tamaño automático */
+  }
+
+  .confirmCancelGroup {
+    width: auto; /* Volver a tamaño automático */
+  }
+}

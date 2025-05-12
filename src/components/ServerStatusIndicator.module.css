@@ -1,0 +1,53 @@
+.indicator {
+  padding: 0; /* Ajustado para un look más circular/cuadrado */
+  width: 28px; /* Ancho fijo para consistencia */
+  height: 28px; /* Alto fijo para consistencia */
+  border-radius: 15px; /* Más redondeado */
+  color: white;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 5px; /* Ajuste de margen */
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  cursor: help; /* Indica que hay un tooltip (title) */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.indicator > svg {
+  font-size: 16px;
+}
+
+.iconSpin {
+  animation: spin 1s linear infinite;
+}
+
+.online {
+  background-color: #28a745; /* Verde */
+}
+
+.offline {
+  background-color: #dc3545; /* Rojo */
+}
+
+.error {
+  background-color: #ffc107; /* Amarillo/Naranja */
+  color: #333; /* Texto oscuro para mejor contraste */
+}
+
+.checking {
+  background-color: #17a2b8; /* Azul info */
+}
+
+.unknown {
+  background-color: #6c757d; /* Gris */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

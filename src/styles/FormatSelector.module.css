@@ -1,0 +1,115 @@
+.formatSelectorContainer {
+  padding: 20px;
+  max-width: 900px;
+  margin: 20px auto;
+  background-color: var(--background-color, #fff);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.articleTitlePreview {
+  font-size: 1.4rem;
+  color: var(--text-color-secondary, #555);
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color-light, #eee);
+}
+
+.formatSelectorContainer h3 {
+  margin-top: 0;
+  color: var(--text-color-primary, #333);
+}
+
+.instructions {
+  font-size: 0.95rem;
+  color: var(--text-color-secondary, #666);
+  margin-bottom: 20px;
+}
+
+.optionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+  padding: 15px;
+  background-color: var(--background-color-secondary, #f8f9fa);
+  border-radius: 6px;
+}
+
+.optionLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.optionLabel:hover {
+  background-color: var(--background-color-tertiary, #e9ecef);
+}
+
+.optionLabel input[type="radio"] {
+  margin-right: 8px;
+  accent-color: var(--primary-color, #007bff); /* Estiliza el radio button */
+}
+
+.previewSection {
+  margin-top: 30px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  padding: 15px;
+  min-height: 200px; /* Para que se vea algo incluso si el contenido es corto */
+}
+
+.previewSection h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--text-color-primary, #333);
+}
+
+.noFormatSelected {
+  color: var(--text-color-secondary, #777);
+  font-style: italic;
+}
+
+.navigationButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color-light, #eee);
+}
+
+.navButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  background-color: var(--secondary-button-bg, #6c757d);
+  color: white;
+}
+.backButton:hover {
+  background-color: var(--secondary-button-hover-bg, #5a6268);
+}
+
+.nextButton {
+  background-color: var(--primary-color, #007bff);
+  color: white;
+}
+.nextButton:hover:not(:disabled) {
+  background-color: var(--primary-color-dark, #0056b3);
+}
+.nextButton:disabled {
+  background-color: var(--disabled-bg-color, #cccccc);
+  cursor: not-allowed;
+}

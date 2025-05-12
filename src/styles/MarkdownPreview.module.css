@@ -1,0 +1,207 @@
+/* src/styles/MarkdownPreview.module.css */
+
+.previewContainer {
+  font-family: sans-serif;
+  font-size: 1rem;
+  word-wrap: break-word;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  color: #333;
+  border-left: 1px solid #ccc;
+}
+
+.previewError {
+  color: red;
+}
+
+.previewPlaceholder {
+  color: #888;
+  font-style: italic;
+}
+
+/* Ajustes de margen para eliminar espacio extra entre elementos */
+.previewContainer h1,
+.previewContainer h2,
+.previewContainer h3,
+.previewContainer h4,
+.previewContainer h5,
+.previewContainer h6,
+.previewContainer p,
+.previewContainer ul,
+.previewContainer ol,
+.previewContainer blockquote,
+.previewContainer pre,
+.previewContainer table,
+.previewContainer hr {
+  margin-top: 0.1em; /* Espacio arriba */
+  margin-bottom: 0.1em; /* Espacio abajo */
+  /* Puedes ajustar estos valores para controlar el espacio vertical entre bloques */
+}
+
+/* Eliminar margen superior del primer elemento y margen inferior del último dentro del contenedor */
+.previewContainer > :first-child {
+  margin-top: 0;
+}
+
+.previewContainer > :last-child {
+  margin-bottom: 0;
+}
+
+/* Encabezados */
+.previewContainer h1 {
+  font-size: 2em;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.1em;
+}
+.previewContainer h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.1em;
+}
+.previewContainer h3 {
+  font-size: 1.2em;
+}
+.previewContainer h4 {
+  font-size: 1em;
+}
+.previewContainer h5 {
+  font-size: 0.9em;
+}
+.previewContainer h6 {
+  font-size: 0.8em;
+  color: #666;
+}
+
+/* Párrafos */
+/* El margen ya se ajustó arriba */
+
+/* Negritas y Cursivas */
+.previewContainer strong,
+.previewContainer b {
+  font-weight: bold;
+}
+.previewContainer em,
+.previewContainer i {
+  font-style: italic;
+}
+
+/* Enlaces */
+.previewContainer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.previewContainer a:hover {
+  text-decoration: underline;
+}
+
+/* Imágenes */
+.previewContainer img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1em auto; /* Centra la imagen y añade margen */
+}
+
+/* Listas */
+.previewContainer ul,
+.previewContainer ol {
+  padding-left: 2em;
+}
+
+.previewContainer li {
+  margin-bottom: 0.1em; /* Espacio entre elementos de lista */
+}
+
+/* Bloques de código en línea */
+.previewContainer :not(pre) > code {
+  background-color: rgba(
+    27,
+    31,
+    35,
+    0.05
+  ); /* Fondo claro para código en línea */
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  padding: 0.2em 0.4em;
+  white-space: pre-wrap; /* Asegura que el código en línea se envuelva */
+  word-break: break-all; /* Rompe palabras si es necesario en código en línea */
+  font-family: monospace; /* Asegura fuente monoespaciada */
+}
+
+/* Bloques de código */
+.previewContainer pre {
+  background-color: #e9ecef; /* <-- Fondo gris ligeramente más oscuro */
+  color: #333; /* <-- Color de texto oscuro para contrastar */
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45; /* Altura de línea específica para bloques de código */
+  overflow: auto; /* Añade scroll si el código es demasiado ancho */
+  padding: 16px;
+  /* El margen ya se ajustó arriba */
+  white-space: pre-wrap; /* Asegura que el código se envuelva */
+  word-wrap: break-word; /* Rompe palabras largas si es necesario */
+  font-family: monospace; /* Asegura fuente monoespaciada */
+}
+
+.previewContainer pre code {
+  display: block; /* Asegura que el código dentro de pre se comporte como bloque */
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit; /* Hereda la altura de línea del pre */
+  word-wrap: normal;
+  background-color: transparent; /* Asegura que no tenga fondo extra */
+  border: 0;
+  color: inherit; /* Hereda el color del texto del pre */
+}
+
+/* Citas en bloque */
+.previewContainer blockquote {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+  /* El margen ya se ajustó arriba */
+}
+
+.previewContainer blockquote > :first-child {
+  margin-top: 0;
+}
+
+.previewContainer blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* Tablas */
+.previewContainer table {
+  border-collapse: collapse;
+  /* El margen ya se ajustó arriba */
+  width: 100%;
+}
+
+.previewContainer th,
+.previewContainer td {
+  border: 1px solid #dfe2e5;
+  padding: 0.6em 1em;
+}
+
+.previewContainer th {
+  font-weight: bold;
+  background-color: #f6f8fa;
+}
+
+.wordCount {
+  font-size: 0.9rem;
+  color: #555; /* Color gris oscuro */
+  margin-left: auto; /* Empuja este elemento hacia la derecha */
+  padding-left: 10px; /* Espacio a la izquierda si se envuelve */
+}
+
+/* Línea horizontal */
+.previewContainer hr {
+  border: 0;
+  height: 1px;
+  background: #dfe2e5;
+  /* El margen ya se ajustó arriba */
+}

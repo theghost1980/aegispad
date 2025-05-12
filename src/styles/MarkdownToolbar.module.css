@@ -1,0 +1,41 @@
+.toolbarContainer {
+  display: flex; /* Usa flexbox para alinear los botones */
+  gap: 8px; /* Espacio entre los botones */
+  padding: 8px 15px; /* Espacio interno */
+  background-color: #e9ecef; /* Un fondo ligeramente diferente para distinguirlo */
+  border-top-left-radius: 8px; /* Bordes redondeados arriba */
+  border-top-right-radius: 8px;
+  flex-wrap: wrap; /* Permite que los botones se envuelvan en pantallas pequeñas */
+}
+
+.toolbarButton {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.toolbarButton:hover {
+  background-color: #e2e6ea;
+  border-color: #d6dbdf;
+}
+
+.toolbarButton:active {
+  background-color: #dae0e5;
+  border-color: #cad2da;
+}
+
+.toolbarButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Media query para ajustar el padding en pantallas pequeñas si es necesario */
+@media (max-width: 768px) {
+  .toolbarContainer {
+    padding: 8px 10px;
+  }
+}
