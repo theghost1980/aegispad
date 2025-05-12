@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MarkdownPreview } from "../components/MarkdownPreview";
+import TagInput from "../components/TagInput";
 import { useArticleStore } from "../stores/articleStore";
 import styles from "../styles/ReviewPage.module.css"; // Crearemos este archivo
 
@@ -97,6 +98,10 @@ const ReviewPage: React.FC = () => {
         >
           {isPreviewVisible ? <FaChevronRight /> : <FaChevronLeft />}
         </button>
+      </div>
+
+      <div className={styles.tagsSection}>
+        <TagInput />
       </div>
 
       <div className={styles.actionMenuContainer}>

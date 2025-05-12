@@ -1,0 +1,53 @@
+.tagInputContainer {
+  display: flex;
+  flex-wrap: wrap; /* Permite que las etiquetas pasen a la siguiente línea */
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color-light, #ccc);
+  border-radius: 6px;
+  background-color: var(--background-color-light, #fff);
+  cursor: text; /* Cambia el cursor para indicar que es editable */
+  min-height: 40px; /* Altura mínima similar a un input normal */
+}
+
+.tagInputContainer:focus-within {
+  border-color: var(--primary-color, #007bff);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.tagItem {
+  display: flex;
+  align-items: center;
+  background-color: var(--primary-color-light, #e0e0e0);
+  color: var(--text-color-primary, #333);
+  padding: 4px 8px;
+  margin: 4px;
+  border-radius: 15px; /* Forma de píldora */
+  font-size: 0.85rem;
+}
+
+.removeTagButton {
+  background: none;
+  border: none;
+  color: var(--text-color-secondary, #555);
+  margin-left: 6px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.8em; /* Icono pequeño */
+}
+
+.removeTagButton:hover {
+  color: var(--danger-color, #dc3545);
+}
+
+.inputField {
+  flex-grow: 1; /* El input ocupa el espacio restante */
+  border: none;
+  outline: none;
+  padding: 6px 4px; /* Espacio interno del input */
+  font-size: 0.9rem;
+  background-color: transparent;
+  min-width: 120px; /* Ancho mínimo para que el placeholder sea visible */
+}
