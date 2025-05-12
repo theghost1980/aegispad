@@ -1,17 +1,24 @@
-import React, { useState, type KeyboardEvent } from "react";
+import React, { useEffect, useState, type KeyboardEvent } from "react";
 import { FaTimes } from "react-icons/fa";
+import { AEGISPAD_TAG } from "../constants/general";
 import { useErrorStore } from "../stores/errorStore"; // Importar el store de errores
 import styles from "../styles/TagInput.module.css"; // Crearemos este archivo CSS
 import { AppError } from "../types/error"; // Importar el creador de errores
 
 interface TagInputProps {
-  // Por ahora no necesita props, pero podríamos añadir `initialTags`, `onTagsChange`, etc.
+  onTagsChange?: (tags: string[]) => void; // Callback para notificar cambios en las etiquetas
 }
 
-const TagInput: React.FC<TagInputProps> = () => {
-  const [tags, setTags] = useState<string[]>([]);
+const TagInput: React.FC<TagInputProps> = ({ onTagsChange }) => {
+  const [tags, setTags] = useState<string[]>([AEGISPAD_TAG]);
   const [inputValue, setInputValue] = useState<string>("");
   const { setError, clearError } = useErrorStore(); // Obtener funciones del store
+
+  useEffect(() => {
+    if (onTagsChange) {
+      onTagsChange(tags);
+    }
+  }, [tags, onTagsChange]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -86,6 +93,7 @@ const TagInput: React.FC<TagInputProps> = () => {
   };
 
   const removeTag = (tagToRemove: string) => {
+    if (tagToRemove === AEGISPAD_TAG) return;
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 

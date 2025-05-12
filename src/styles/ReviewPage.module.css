@@ -143,6 +143,16 @@
   border-color: var(--primary-color-dark, #0056b3);
 }
 
+.publishButton:disabled {
+  background-color: var(--button-disabled-bg, #ccc); /* Un gris claro */
+  border-color: var(--button-disabled-border, #bbb);
+  color: var(
+    --button-disabled-text,
+    #666
+  ); /* Texto un poco más oscuro para contraste */
+  cursor: not-allowed; /* Indica que no se puede hacer clic */
+}
+
 /* Reutilizar estilos de botones de navegación si es necesario */
 .navigationButtons {
   display: flex;
