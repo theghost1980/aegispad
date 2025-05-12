@@ -88,29 +88,26 @@ export const useArticleStore = create<ArticleState>()(
 
         // Lógica para construir el combinedMarkdown
         let combined = "";
-        const titlePart = title ? `# ${title}\n` : "";
-        // Añadir el título traducido solo si existe.
-        const translatedTitlePart = translatedTitle
+        const originalTitleMarkdown = title ? `# ${title}\n\n` : ""; // Título original con doble salto de línea
+        const translatedTitleMarkdown = translatedTitle
           ? `## ${translatedTitle}\n\n`
-          : title
-          ? "\n"
-          : "";
-
+          : ""; // Título traducido con doble salto de línea
         const originalBody = originalMarkdown || "";
 
         if (translatedMarkdown && selectedFormatOption) {
           const translatedBody = translatedMarkdown || "";
           if (selectedFormatOption === "simple") {
             // Formato simple: Original, separador, Traducción (con títulos)
-            combined = `${titlePart}${translatedTitlePart}${originalBody}\n\n---\n\n${translatedBody}`;
+            combined = `${originalTitleMarkdown}${originalBody}\n\n---\n\n${translatedBody}`;
           } else if (selectedFormatOption === "details") {
             // Formato details: Títulos, luego Original, y la Traducción dentro de <details>
-            const summaryText = `Traducción <img src="https://files.peakd.com/file/peakd-hive/theghost1980/AKREjL6d1fMvN5UvkUDGL8Lc4RP2in8voDTZuwGcyRbFNUkSP2zQC8HZwnEd4kg.png" alt="mini logo" style="height: 3em; vertical-align: middle; margin-left: 5px;" />`;
-            combined = `${titlePart}${translatedTitlePart}${originalBody}\n\n<details>\n<summary>${summaryText}</summary>\n\n${translatedBody}\n</details>`;
+            const summaryText = `Traducción <img src="https://files.peakd.com/file/peakd-hive/theghost1980/AKREjL6d1fMvN5UvkUDGL8Lc4RP2in8voDTZuwGcyRbFNUkSP2zQC8HZwnEd4kg.png" alt="mini logo" style="height: 1em; vertical-align: middle; margin-left: 5px;" />`; // Ajustado height
+            // Título original y cuerpo original fuera. Título traducido y cuerpo traducido dentro de details.
+            combined = `${originalTitleMarkdown}${originalBody}\n\n<details>\n<summary>${summaryText}</summary>\n\n${translatedTitleMarkdown}${translatedBody}\n</details>`;
           }
         } else {
           // Si no hay formato seleccionado o no hay traducción del cuerpo, mostrar títulos y cuerpo original.
-          combined = `${titlePart}${translatedTitlePart}${originalBody}`;
+          combined = `${originalTitleMarkdown}${originalBody}`; // Solo original si no hay traducción o formato
         }
         set({ combinedMarkdown: combined });
       },

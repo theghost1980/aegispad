@@ -9,6 +9,7 @@ import EditorPage from "./pages/Editor";
 import FormatSelectionPage from "./pages/FormatSelectionPage";
 import HomePage from "./pages/Home";
 import { Login } from "./pages/Login";
+import MyPostsPage from "./pages/MypostsPage";
 import ProfilePage from "./pages/Profile";
 import ReviewPage from "./pages/ReviewPage";
 import { useServerStatusStore } from "./stores/serverStatusStore";
@@ -38,6 +39,15 @@ function App() {
           {/* path="/" coincide con la URL raíz. element={...} renderiza el componente */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
+
+          <Route
+            path="/my-posts" // Nueva ruta para las publicaciones del usuario
+            element={
+              <PrivateRoute>
+                <MyPostsPage />
+              </PrivateRoute>
+            }
+          />
 
           {/* Rutas del Editor anidadas bajo EditorLayout */}
           <Route

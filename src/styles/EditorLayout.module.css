@@ -1,8 +1,9 @@
 .editorLayoutContainer {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Ocupa la altura disponible de su contenedor padre (main en Layout.tsx) */
+  flex-grow: 1; /* Para que ocupe el espacio disponible en mainContent */
   position: relative; /* Para que el EditorStepper flotante se posicione correctamente */
+  overflow: hidden;
 }
 
 .editorContent {

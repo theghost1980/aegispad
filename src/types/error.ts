@@ -5,7 +5,8 @@ export type ErrorType =
   | "keychain"
   | "general"
   | "configuration"
-  | "traduccion";
+  | "traduccion"
+  | "hive-api";
 
 /**
  * Custom Error class for application-specific errors.

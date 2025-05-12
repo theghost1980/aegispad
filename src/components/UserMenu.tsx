@@ -101,16 +101,17 @@ export function UserMenu() {
           <li className={styles.menuItem}>
             <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
               {" "}
-              {/* Link to profile */}
               Perfil
             </Link>
           </li>
           <li className={styles.menuItem}>
-            <button onClick={handleLogout}>
+            <Link to="/my-posts" onClick={() => setIsMenuOpen(false)}>
               {" "}
-              {/* Logout button */}
-              Cerrar Sesión
-            </button>
+              Mis Publicaciones
+            </Link>
+          </li>
+          <li className={styles.menuItem}>
+            <button onClick={handleLogout}> Cerrar Sesión</button>
           </li>
         </ul>
       )}

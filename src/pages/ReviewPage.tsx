@@ -27,6 +27,7 @@ const ReviewPage: React.FC = () => {
     combinedMarkdown,
     setCurrentEditorStep,
     currentEditorStep,
+    resetArticleState, // Obtener la función para resetear el estado
   } = useArticleStore();
   const { username: author } = useAuthStore();
   const { showLoader, hideLoader } = useOperationLoadingStore();
@@ -122,7 +123,7 @@ const ReviewPage: React.FC = () => {
           "", // Parent account (cadena vacía para post principal)
           JSON.stringify(jsonMetadata), // JSON Metadata
           permlink, // Permlink del post
-          null, // Comment options (null para post principal)
+          "", // Comment options (null para post principal)
           (keychainResponse) => {
             if (keychainResponse.success) {
               resolve(keychainResponse);
@@ -145,8 +146,8 @@ const ReviewPage: React.FC = () => {
         (response.success || (response.result && response.result.id))
       ) {
         showSuccess("¡Artículo publicado con éxito en HIVE!");
-        // Opcional: resetear el estado del artículo o navegar
-        // navigate("/");
+        resetArticleState(); // Reseteamos el estado del artículo
+        navigate("/my-posts");
       } else {
         // Este caso podría no alcanzarse si la promesa ya rechazó
         throw new Error(

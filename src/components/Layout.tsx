@@ -34,7 +34,7 @@ export function Layout({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main>{children}</main>
+      <main className={styles.mainContent}>{children}</main>
     </div>
   );
 }
