@@ -1,14 +1,23 @@
 .editorContainer {
   display: flex; /* Usa flexbox para layout de dos columnas */
-  width: 100%; /* Asegura que ocupe todo el ancho disponible de su contenedor padre */
-  gap: 20px; /* Espacio entre las columnas */
+  flex-direction: column; /* Ahora los elementos se apilan verticalmente */
+  width: 100%;
+  gap: 20px;
   padding: 20px;
-  height: calc(
-    100vh - var(--header-height, 80px) - 40px
-      /* Ajuste de altura considerando header y padding */
-  ); /* Ajusta la altura, restando header y padding */
-  box-sizing: border-box; /* Incluye padding en la altura */
-  position: relative; /* Establece este contenedor como referencia para el posicionamiento absoluto del botón */
+  position: relative; /* Para el Stepper flotante si no está en un layout superior */
+  /* Eliminamos la altura fija para permitir que el contenido determine la altura y el contenedor padre maneje el scroll */
+  /* height: calc(100vh - var(--header-height, 80px) - 40px); */
+  /* box-sizing: border-box; */
+}
+
+.panesWrapper {
+  /* Nuevo contenedor para los paneles */
+  display: flex;
+  flex-direction: row; /* Paneles uno al lado del otro */
+  gap: 20px; /* Espacio horizontal entre los paneles */
+  flex-grow: 1; /* Permite que este contenedor ocupe el espacio vertical restante */
+  min-height: 0; /* Importante para que flex-grow funcione correctamente con contenido scrolleable */
+  position: relative; /* Para posicionar el togglePaneButton dentro de este wrapper */
 }
 
 .configureLanguagesButton {
@@ -53,6 +62,7 @@
 
 .paneHeader {
   padding: 10px 15px;
+  flex-shrink: 0;
   background-color: #f0f0f0;
   border-bottom: 1px solid #ccc;
   font-weight: bold;
@@ -64,7 +74,7 @@
 
 .togglePaneButton {
   position: absolute; /* Posicionamiento absoluto respecto al .editorContainer */
-  right: 5px; /* Distancia desde el borde derecho */
+  right: -10px;
   top: 50%; /* Centrado verticalmente */
   transform: translateY(-50%); /* Ajuste fino para centrado vertical exacto */
   z-index: 1050; /* Para asegurar que esté sobre otros elementos (ajusta si es necesario) */
@@ -84,6 +94,24 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para efecto flotante */
   transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Transiciones suaves */
   opacity: 0.35;
+}
+
+/* Ajustar la posición del botón de toggle cuando el panel izquierdo está fullWidth */
+/* Esto requiere que el botón esté posicionado relativo a panesWrapper */
+.panesWrapper .togglePaneButton {
+  right: -10px; /* Posición normal */
+}
+
+.panesWrapper .editorPaneFullWidth + .togglePaneButton {
+  /* Mover el botón al borde derecho del panel fullWidth */
+  right: -10px; /* O ajusta si necesitas que se mueva más */
+}
+
+.continueButtonContainer {
+  display: flex;
+  justify-content: center; /* Centra el botón horizontalmente */
+  margin-top: 10px; /* Espacio encima del botón */
+  /* margin-bottom: 0; */ /* Ya hay gap en editorContainer */
 }
 
 .togglePaneButton:hover {
@@ -126,6 +154,7 @@
   font-family: monospace;
   font-size: 1rem;
   line-height: 1.5;
+  flex-shrink: 1;
   /* Ajusta el padding-top si la barra de progreso está dentro del flujo normal */
   /* Si la barra es absoluta, no necesitas ajustar el padding del textarea */
   padding-top: 5px; /* Ejemplo: espacio debajo de la barra si no es absoluta */
@@ -165,7 +194,8 @@
 }
 
 .translationOutput {
-  flex: 1;
+  flex-grow: 1; /* Permite que la salida de traducción ocupe todo el espacio restante */
+  flex-shrink: 1;
   padding: 15px;
   background-color: #f9f9f9; /* Fondo ligeramente diferente */
   white-space: pre-wrap; /* Preserva saltos de línea y espacios */

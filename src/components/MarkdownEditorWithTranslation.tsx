@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { FaChevronLeft, FaChevronRight, FaCog } from "react-icons/fa";
 import { IoLanguage } from "react-icons/io5";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // Importar useNavigate
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { translateText } from "../services/translationService";
 import { useArticleStore } from "../stores/articleStore";
 import { useErrorStore } from "../stores/errorStore";
@@ -93,11 +93,12 @@ export function MarkdownEditorWithTranslation() {
         let finalTranslation = "";
         try {
           const {
-            tree: originalTree,
+            tree: processedTree, // Renombrado para claridad
             textFragments,
             tableAlignments: originalTableAlignments,
           } = cleanMarkdownForTranslation(markdownText);
 
+          originalTree = processedTree; // Asignar a la variable de alcance más amplio
           extractedFragments = textFragments;
 
           console.log("DEBUG EDITOR: AST después de limpieza:", originalTree);
@@ -133,11 +134,10 @@ export function MarkdownEditorWithTranslation() {
               originalTree,
               originalTableAlignments,
               translatedTexts,
-              textFragments
+              textFragments // Pasar los fragmentos originales para la reinserción
             );
             finalTranslation = finalTranslatedMarkdown;
             setTranslatedText(finalTranslatedMarkdown);
-            // Solo si la traducción y reinserción son exitosas, actualizamos el store y notificamos
             setOriginalMarkdown(markdownText);
             setTranslatedMarkdown(finalTranslatedMarkdown);
 
@@ -157,8 +157,6 @@ export function MarkdownEditorWithTranslation() {
                 }
               } catch (titleErr) {
                 console.error("Error translating title:", titleErr);
-                // Opcional: notificar al usuario sobre el error en la traducción del título
-                // setError(createAppError("Error al traducir el título.", ...));
               }
             }
 
@@ -179,8 +177,7 @@ export function MarkdownEditorWithTranslation() {
               {
                 extractedCount: extractedFragments.length,
                 translatedCount: translatedTexts.length,
-                translatedTexts,
-                translatedTextsArray: translatedTexts,
+                translatedTextsArray: translatedTexts, // Para claridad en el log
               }
             );
             const errorMsg =
@@ -190,7 +187,7 @@ export function MarkdownEditorWithTranslation() {
                 errorMsg,
                 "Inconsistent fragment count from translation service.",
                 undefined,
-                "traduccion",
+                "traduccion", // Cambiado de "translation" para consistencia
                 true,
                 true
               )
@@ -211,7 +208,7 @@ export function MarkdownEditorWithTranslation() {
                   }`,
                   err.stack || JSON.stringify(err),
                   undefined,
-                  "traduccion",
+                  "traduccion", // Cambiado de "translation" para consistencia
                   true,
                   true,
                   err
@@ -231,7 +228,7 @@ export function MarkdownEditorWithTranslation() {
       }
     ),
     [
-      markdownText,
+      markdownText, // Asegúrate de que markdownText esté aquí si se usa directamente en la función debounced
       setError,
       clearError,
       preferredSourceLanguage,
@@ -267,28 +264,24 @@ export function MarkdownEditorWithTranslation() {
         setMarkdownText(currentStoreOriginalMd);
       }
       if (currentStoreTranslatedMd) {
-        setTranslatedText(currentStoreTranslatedMd); // Carga la traducción al estado local de previsualización
+        setTranslatedText(currentStoreTranslatedMd);
       }
 
-      // Limpiar el estado de navegación para que una recarga no repita esta lógica
       const { fromFormatSelection, ...restOfState } = navigationState;
       window.history.replaceState(
         restOfState,
         document.title,
         window.location.pathname
       );
+    } else {
+      // Carga normal o si no se viene de la selección de formato
+      if (currentStoreOriginalMd) {
+        setMarkdownText(currentStoreOriginalMd);
+      }
+      // No cargar translatedText desde el store aquí a menos que sea parte del flujo de "regreso"
     }
-    // else {
-    //   // Carga normal (ej. primera carga, recarga directa de la página del editor)
-    //   // Cargar solo el markdown original del store si existe
-    //   console.log("DEBUG EDITOR: Carga normal o recarga. Cargando solo original si existe.");
-    //   if (currentStoreOriginalMd) {
-    //     setMarkdownText(currentStoreOriginalMd);
-    //   }
-    //   // No se carga `translatedText` automáticamente aquí si no se viene de la selección de formato.
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.state]);
+  }, [location.state]); // Solo location.state como dependencia
 
   const handleMarkdownChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -302,7 +295,6 @@ export function MarkdownEditorWithTranslation() {
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStoreTitle(event.target.value);
-    // setTranslatedTitle(""); // Opcional: Limpiar título traducido cuando el original cambia
   };
 
   const handleTranslateButtonClick = () => {
@@ -389,15 +381,7 @@ export function MarkdownEditorWithTranslation() {
       return;
     }
 
-    const altText =
-      selectedText ||
-      window.prompt(
-        "Introduce el texto alternativo para el enlace:",
-        "texto alternativo"
-      );
-    if (altText === null) return;
-
-    const markdownToInsert = `[${altText}](${url})`;
+    const markdownToInsert = `${linkText}`; // Usar linkText en lugar de altText para enlaces
 
     const newText =
       textarea.value.substring(0, start) +
@@ -408,13 +392,16 @@ export function MarkdownEditorWithTranslation() {
 
     setTimeout(() => {
       textarea.focus();
+      // Ajustar selección para el texto del enlace o la URL
       if (selectedText) {
-        const selectionStart = start + linkText.length + 3;
-        const selectionEnd = selectionStart + url.length;
+        // Si había texto seleccionado, se asume que es el texto del enlace
+        const selectionStart = start + 1; // Después de '['
+        const selectionEnd = selectionStart + linkText.length;
         textarea.setSelectionRange(selectionStart, selectionEnd);
       } else {
-        const selectionStart = start + 1;
-        const selectionEnd = selectionStart + linkText.length;
+        // Si no, seleccionar la URL para fácil edición
+        const selectionStart = start + markdownToInsert.indexOf(url);
+        const selectionEnd = selectionStart + url.length;
         textarea.setSelectionRange(selectionStart, selectionEnd);
       }
     }, 0);
@@ -441,9 +428,9 @@ export function MarkdownEditorWithTranslation() {
         "Introduce el texto alternativo para la imagen:",
         "texto alternativo"
       );
-    if (altText === null) return;
+    if (altText === null) return; // Si el usuario cancela el prompt de alt text
 
-    const markdownToInsert = `![${altText}](${imageUrl})`;
+    const markdownToInsert = `!${altText}`;
 
     const newText =
       textarea.value.substring(0, start) +
@@ -454,15 +441,10 @@ export function MarkdownEditorWithTranslation() {
 
     setTimeout(() => {
       textarea.focus();
-      if (selectedText) {
-        const selectionStart = start + altText.length + 4;
-        const selectionEnd = selectionStart + imageUrl.length;
-        textarea.setSelectionRange(selectionStart, selectionEnd);
-      } else {
-        const selectionStart = start + 2;
-        const selectionEnd = selectionStart + altText.length;
-        textarea.setSelectionRange(selectionStart, selectionEnd);
-      }
+      // Seleccionar el texto alternativo para fácil edición
+      const selectionStart = start + 2; // Después de '!['
+      const selectionEnd = selectionStart + altText.length;
+      textarea.setSelectionRange(selectionStart, selectionEnd);
     }, 0);
   };
 
@@ -529,12 +511,15 @@ export function MarkdownEditorWithTranslation() {
     const summaryPlaceholder = "Título del detalle";
     let detailsContent = selectedText || "Contenido aquí...";
 
+    // Asegurar saltos de línea alrededor del contenido si es multilínea o si es el placeholder
     if (selectedText && selectedText.includes("\n")) {
       detailsContent = `\n${selectedText}\n`;
     } else if (selectedText) {
-      detailsContent = `\n${selectedText}\n`;
+      // Si es una sola línea seleccionada
+      detailsContent = `\n  ${selectedText}\n`; // Añadir indentación
     } else {
-      detailsContent = `\n${detailsContent}\n`;
+      // Placeholder
+      detailsContent = `\n  ${detailsContent}\n`; // Añadir indentación
     }
 
     const markdownToInsert = `<details>\n<summary>${summaryPlaceholder}</summary>${detailsContent}</details>`;
@@ -566,11 +551,10 @@ export function MarkdownEditorWithTranslation() {
 
   const handleContinueToFormatSelection = () => {
     if (markdownText !== storeOriginalMarkdown) {
-      // Asegurarse de que el markdown más reciente esté en el store
       setOriginalMarkdown(markdownText);
     }
     setCurrentEditorStep("SELECTING_FORMAT");
-    navigate("/editor/format"); // Navegar a la nueva página
+    navigate("/editor/format");
   };
 
   const handleConfirmTranslation = () => {
@@ -609,129 +593,135 @@ export function MarkdownEditorWithTranslation() {
         !isTranslationPaneVisible ? styles.translationHidden : ""
       }`}
     >
-      <div
-        className={`${styles.editorPane} ${
-          !isTranslationPaneVisible ? styles.editorPaneFullWidth : ""
-        }`}
-      >
-        <div className={styles.titleInputContainer}>
-          <input
-            type="text"
-            value={storeTitle}
-            onChange={handleTitleChange}
-            placeholder="Título de tu artículo..."
-            className={styles.titleInput}
-          />
-        </div>
-        <div className={styles.paneHeader}>
-          <MarkdownToolbar
-            onBold={handleBold}
-            onItalic={handleItalic}
-            onInsertImage={handleInsertImage}
-            onInsertLink={handleInsertLink}
-            onInsertCodeBlock={handleInsertCodeBlock}
-            onInsertDetailsBlock={handleInsertDetailsBlock}
-          />
-          <span className={styles.wordCount}>{wordCount} palabras</span>
-          <button
-            onClick={handleTranslateButtonClick}
-            className={styles.translateButton}
-            title={"Traducir"}
-          >
-            <IoLanguage style={{ marginRight: "8px" }} />
-          </button>
-        </div>
-        {(debounceProgress > 0 || isOperationLoading) && !translatedText && (
-          <div className={styles.debounceProgressBarContainer}>
-            <div
-              className={styles.debounceProgressBar}
-              style={{ width: `${debounceProgress}%` }}
-            ></div>
-          </div>
-        )}
-        <textarea
-          ref={textareaRef}
-          className={styles.editorTextarea}
-          value={markdownText}
-          onChange={handleMarkdownChange}
-          placeholder="Escribe tu artículo en Markdown aquí..."
+      <div className={styles.titleInputContainer}>
+        <input
+          type="text"
+          value={storeTitle}
+          onChange={handleTitleChange}
+          placeholder="Título de tu artículo..."
+          className={styles.titleInput}
         />
-        {storeTranslatedMarkdown && (
-          <div className={styles.continueButtonContainer}>
-            <button
-              onClick={handleContinueToFormatSelection}
-              className={styles.continueButton}
-              disabled={!storeTranslatedMarkdown.trim()}
-              title="Continuar para seleccionar el formato de presentación"
-            >
-              Continuar a Selección de Formato
-              <FaChevronRight style={{ marginLeft: "8px" }} />
-            </button>
-          </div>
-        )}
       </div>
 
-      {isTranslationPaneVisible && (
-        <div className={styles.translationPane}>
+      <div className={styles.panesWrapper}>
+        <div
+          className={`${styles.editorPane} ${
+            !isTranslationPaneVisible ? styles.editorPaneFullWidth : ""
+          }`}
+        >
           <div className={styles.paneHeader}>
-            <span>{translatedText ? "Traducción" : "Previsualización"}</span>
-            {preferredSourceLanguage && preferredTargetLanguage ? (
-              <span className={styles.translationLanguagesDisplay}>
-                {preferredSourceLanguage.name} ({preferredSourceLanguage.code})
-                → {preferredTargetLanguage.name} ({preferredTargetLanguage.code}
-                )
-              </span>
-            ) : (
-              <Link
-                to="/profile#language-settings"
-                className={styles.configureLanguagesButton}
-                title="Configurar idiomas de traducción"
-              >
-                <FaCog />
-              </Link>
-            )}
+            <MarkdownToolbar
+              onBold={handleBold}
+              onItalic={handleItalic}
+              onInsertImage={handleInsertImage}
+              onInsertLink={handleInsertLink}
+              onInsertCodeBlock={handleInsertCodeBlock}
+              onInsertDetailsBlock={handleInsertDetailsBlock}
+            />
+            <span className={styles.wordCount}>{wordCount} palabras</span>
+            <button
+              onClick={handleTranslateButtonClick}
+              className={styles.translateButton}
+              title={"Traducir"}
+            >
+              <IoLanguage style={{ marginRight: "8px" }} />
+            </button>
           </div>
-          <div className={styles.translationOutput}>
-            {storeTranslatedTitle && (
-              <h2 className={styles.translatedTitlePreview}>
-                {storeTranslatedTitle}
-              </h2>
-            )}
-            {translatedText ? (
-              <MarkdownPreview markdown={translatedText} />
-            ) : markdownText ? (
-              <MarkdownPreview markdown={markdownText} />
-            ) : (
-              <p style={{ color: "#888", fontStyle: "italic" }}>
-                La previsualización aparecerá aquí...
-              </p>
-            )}
-            {isOperationLoading && !translatedText && (
-              <p
-                style={{
-                  color: "#888",
-                  fontStyle: "italic",
-                  marginTop: "10px",
-                }}
-              >
-                Traduciendo...
-              </p>
-            )}
+          {(debounceProgress > 0 || isOperationLoading) && !translatedText && (
+            <div className={styles.debounceProgressBarContainer}>
+              <div
+                className={styles.debounceProgressBar}
+                style={{ width: `${debounceProgress}%` }}
+              ></div>
+            </div>
+          )}
+          <textarea
+            ref={textareaRef}
+            className={styles.editorTextarea}
+            value={markdownText}
+            onChange={handleMarkdownChange}
+            placeholder="Escribe tu artículo en Markdown aquí..."
+          />
+        </div>
+
+        {isTranslationPaneVisible && (
+          <div className={styles.translationPane}>
+            <div className={styles.paneHeader}>
+              <span>{translatedText ? "Traducción" : "Previsualización"}</span>
+              {preferredSourceLanguage && preferredTargetLanguage ? (
+                <span className={styles.translationLanguagesDisplay}>
+                  {preferredSourceLanguage.name} ({preferredSourceLanguage.code}
+                  ) → {preferredTargetLanguage.name} (
+                  {preferredTargetLanguage.code})
+                </span>
+              ) : (
+                <Link
+                  to="/profile#language-settings"
+                  className={styles.configureLanguagesButton}
+                  title="Configurar idiomas de traducción"
+                >
+                  <FaCog />
+                </Link>
+              )}
+            </div>
+            <div className={styles.translationOutput}>
+              {storeTranslatedTitle && (
+                <h2 className={styles.translatedTitlePreview}>
+                  {storeTranslatedTitle}
+                </h2>
+              )}
+              {translatedText ? (
+                <MarkdownPreview markdown={translatedText} />
+              ) : markdownText ? (
+                <MarkdownPreview markdown={markdownText} />
+              ) : (
+                <p style={{ color: "#888", fontStyle: "italic" }}>
+                  La previsualización aparecerá aquí...
+                </p>
+              )}
+              {isOperationLoading &&
+                !translatedText && ( // Corregido: isOperationLoading
+                  <p
+                    style={{
+                      color: "#888",
+                      fontStyle: "italic",
+                      marginTop: "10px",
+                    }}
+                  >
+                    Traduciendo...
+                  </p>
+                )}
+            </div>
           </div>
+        )}
+
+        <button
+          className={styles.togglePaneButton}
+          onClick={handleToggleTranslationPane}
+          title={
+            isTranslationPaneVisible
+              ? "Ocultar panel derecho"
+              : "Mostrar panel derecho"
+          }
+        >
+          {isTranslationPaneVisible ? <FaChevronRight /> : <FaChevronLeft />}
+        </button>
+      </div>
+
+      {/* Botón "Continuar a Selección de Formato" reubicado aquí */}
+      {storeTranslatedMarkdown && (
+        <div className={styles.continueButtonContainer}>
+          <button
+            onClick={handleContinueToFormatSelection}
+            className={styles.continueButton}
+            disabled={!storeTranslatedMarkdown.trim()}
+            title="Continuar para seleccionar el formato de presentación"
+          >
+            Continuar a Selección de Formato
+            <FaChevronRight style={{ marginLeft: "8px" }} />
+          </button>
         </div>
       )}
-
-      <button
-        className={styles.togglePaneButton}
-        onClick={handleToggleTranslationPane}
-        title={
-          isTranslationPaneVisible
-            ? "Ocultar panel derecho"
-            : "Mostrar panel derecho"
-        }
-      >
-        {isTranslationPaneVisible ? <FaChevronRight /> : <FaChevronLeft />}
-      </button>
 
       <ConfirmTranslationModal
         isOpen={isConfirmModalVisible}
