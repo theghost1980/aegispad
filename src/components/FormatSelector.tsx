@@ -35,7 +35,7 @@ const FormatSelector: React.FC = () => {
 
   const handleGoBackToEditor = () => {
     setCurrentEditorStep("WRITING_TRANSLATING");
-    navigate("/editor"); // Navegar de vuelta a la página principal del editor
+    navigate("/editor", { state: { fromFormatSelection: true } });
   };
 
   if (!originalMarkdown && !translatedMarkdown) {

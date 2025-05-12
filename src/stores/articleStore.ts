@@ -119,7 +119,7 @@ export const useArticleStore = create<ArticleState>()(
             newCombinedMarkdown = `${originalMarkdown}\n\n---\n\n${translatedMarkdown}`;
           } else if (selectedFormatOption === "details") {
             // TODO: Obtener el idioma de destino para el summary, por ahora hardcodeado
-            const summaryText = "Ver Traducción";
+            const summaryText = "TR AegisPad";
             newCombinedMarkdown = `${originalMarkdown}\n\n<details>\n<summary>${summaryText}</summary>\n\n${translatedMarkdown}\n</details>`;
           } else {
             // Si no hay formato seleccionado pero hay traducción, podríamos decidir un default o dejar solo el original.

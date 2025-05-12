@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { FaChevronLeft, FaChevronRight, FaCog } from "react-icons/fa";
 import { IoLanguage } from "react-icons/io5";
-import { Link, useNavigate } from "react-router-dom"; // Importar useNavigate
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Importar useNavigate
 import { translateText } from "../services/translationService";
 import { useArticleStore } from "../stores/articleStore";
 import { useErrorStore } from "../stores/errorStore";
@@ -35,7 +35,9 @@ export function MarkdownEditorWithTranslation() {
   const [debounceProgress, setDebounceProgress] = useState(0);
   const { setError, clearError } = useErrorStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const navigate = useNavigate(); // Hook para la navegación
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [isTranslationPaneVisible, setIsTranslationPaneVisible] =
     useState(true);
@@ -248,6 +250,45 @@ export function MarkdownEditorWithTranslation() {
       debouncedTranslate.cancel();
     };
   }, [debouncedTranslate]);
+
+  useEffect(() => {
+    const navigationState = location.state as {
+      fromFormatSelection?: boolean;
+    } | null;
+    const currentStoreOriginalMd = useArticleStore.getState().originalMarkdown;
+    const currentStoreTranslatedMd =
+      useArticleStore.getState().translatedMarkdown;
+
+    if (navigationState?.fromFormatSelection) {
+      console.log(
+        "DEBUG EDITOR: Regresando de selección de formato. Cargando original y traducción."
+      );
+      if (currentStoreOriginalMd) {
+        setMarkdownText(currentStoreOriginalMd);
+      }
+      if (currentStoreTranslatedMd) {
+        setTranslatedText(currentStoreTranslatedMd); // Carga la traducción al estado local de previsualización
+      }
+
+      // Limpiar el estado de navegación para que una recarga no repita esta lógica
+      const { fromFormatSelection, ...restOfState } = navigationState;
+      window.history.replaceState(
+        restOfState,
+        document.title,
+        window.location.pathname
+      );
+    }
+    // else {
+    //   // Carga normal (ej. primera carga, recarga directa de la página del editor)
+    //   // Cargar solo el markdown original del store si existe
+    //   console.log("DEBUG EDITOR: Carga normal o recarga. Cargando solo original si existe.");
+    //   if (currentStoreOriginalMd) {
+    //     setMarkdownText(currentStoreOriginalMd);
+    //   }
+    //   // No se carga `translatedText` automáticamente aquí si no se viene de la selección de formato.
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
 
   const handleMarkdownChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
