@@ -37,9 +37,10 @@
   text-decoration: underline;
 }
 
-.userInfo {
-  font-size: 0.875rem;
-  color: var(--color-accent);
+.headerRightActions {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Espacio entre el ServerStatusIndicator y el AuthButton */
 }
 
 .mainContent {

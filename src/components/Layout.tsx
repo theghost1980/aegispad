@@ -27,9 +27,8 @@ export function Layout({ children }: { children: ReactNode }) {
           <Link to="/profile">Perfil</Link>
         </nav>
 
-        <ServerStatusIndicator />
-
-        <div className={styles.userInfo}>
+        <div className={styles.headerRightActions}>
+          <ServerStatusIndicator />
           <AuthButton />
         </div>
       </header>
