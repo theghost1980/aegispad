@@ -24,7 +24,7 @@ const stepsConfig: StepConfig[] = [
     icon: FaObjectUngroup,
   },
   {
-    id: "REVIEWING_PUBLISHING",
+    id: "REVIEWING", // Cambiado para coincidir con el store y las páginas
     label: "Revisar y Publicar",
     icon: FaPaperPlane,
   },

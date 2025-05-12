@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
+import EditorLayout from "./components/EditorLayout"; // Importar el nuevo layout
 import { Layout } from "./components/Layout";
 import OperationLoader from "./components/OperationLoader"; // Importar el nuevo loader
 import PrivateRoute from "./components/PrivateRoute";
@@ -38,30 +39,21 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
 
+          {/* Rutas del Editor anidadas bajo EditorLayout */}
           <Route
             path="/editor"
             element={
               <PrivateRoute>
-                <EditorPage />
+                <EditorLayout />
               </PrivateRoute>
             }
-          />
-          <Route
-            path="/editor/format"
-            element={
-              <PrivateRoute>
-                <FormatSelectionPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/editor/review" // Nueva ruta
-            element={
-              <PrivateRoute>
-                <ReviewPage />
-              </PrivateRoute>
-            }
-          />
+          >
+            {/* Ruta índice para /editor */}
+            <Route index element={<EditorPage />} />
+            <Route path="format" element={<FormatSelectionPage />} />
+            <Route path="review" element={<ReviewPage />} />
+          </Route>
+
           <Route
             path="/profile"
             element={

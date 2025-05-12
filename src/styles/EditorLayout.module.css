@@ -1,0 +1,13 @@
+.editorLayoutContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ocupa la altura disponible de su contenedor padre (main en Layout.tsx) */
+  position: relative; /* Para que el EditorStepper flotante se posicione correctamente */
+}
+
+.editorContent {
+  flex-grow: 1; /* El contenido de la página ocupa el espacio restante */
+  padding-top: 60px; /* Espacio para el EditorStepper si es flotante y está arriba. Ajusta según tu diseño del Stepper. */
+  /* Si el Stepper no es flotante o está en otro lugar, este padding puede no ser necesario o diferente. */
+  overflow-y: auto; /* Permite scroll en el contenido si excede la altura */
+}

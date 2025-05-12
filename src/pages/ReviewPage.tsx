@@ -7,7 +7,6 @@ import {
   FaSave,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import EditorStepper from "../components/EditorStepper";
 import { MarkdownPreview } from "../components/MarkdownPreview";
 import { useArticleStore } from "../stores/articleStore";
 import styles from "../styles/ReviewPage.module.css"; // Crearemos este archivo
@@ -61,8 +60,6 @@ const ReviewPage: React.FC = () => {
 
   return (
     <div className={styles.reviewPageContainer}>
-      <EditorStepper />
-
       {(title || translatedTitle) && (
         <div className={styles.titleDisplayContainer}>
           {title && <h1>{title}</h1>}
