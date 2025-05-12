@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react"; // Añadir useState
 import {
   FaCheckCircle,
+  FaCompressAlt, // Icono para colapsar
+  FaExpandAlt, // Icono para expandir
   FaObjectUngroup,
   FaPaperPlane,
   FaPenFancy,
@@ -30,6 +32,9 @@ const stepsConfig: StepConfig[] = [
 
 const EditorStepper: React.FC = () => {
   const currentStep = useArticleStore((state) => state.currentEditorStep);
+  const [isExpanded, setIsExpanded] = useState(false); // Inicia colapsado
+
+  const toggleExpansion = () => setIsExpanded(!isExpanded);
 
   const getStepStatus = (
     stepId: EditorStep,
@@ -49,37 +54,64 @@ const EditorStepper: React.FC = () => {
     return "upcoming";
   };
 
-  return (
-    <div className={styles.stepperContainer}>
-      {stepsConfig.map((step, index) => {
-        const status = getStepStatus(step.id, currentStep);
-        let stepClass = styles.step;
-        if (status === "completed") {
-          stepClass += ` ${styles.completed}`;
-        } else if (status === "current") {
-          stepClass += ` ${styles.current}`;
-        } else {
-          stepClass += ` ${styles.upcoming}`;
-        }
+  // Encuentra la configuración del paso actual para mostrarla cuando está colapsado
+  const currentStepData = stepsConfig.find((step) => step.id === currentStep);
 
-        return (
-          <React.Fragment key={step.id}>
-            <div className={stepClass}>
-              <div className={styles.iconWrapper}>
-                {status === "completed" ? (
-                  <FaCheckCircle className={styles.icon} />
-                ) : (
-                  <step.icon className={styles.icon} />
-                )}
+  return (
+    <div
+      className={`${styles.stepperContainer} ${
+        isExpanded ? styles.expanded : styles.collapsed
+      }`}
+    >
+      {!isExpanded && currentStepData && (
+        // Renderizar solo el paso actual cuando está colapsado
+        <div className={`${styles.step} ${styles.currentCollapsedView}`}>
+          <div className={styles.iconWrapper}>
+            <currentStepData.icon className={styles.icon} />
+          </div>
+          <div className={styles.label}>{currentStepData.label}</div>
+        </div>
+      )}
+
+      {isExpanded &&
+        stepsConfig.map((step, index) => {
+          const status = getStepStatus(step.id, currentStep);
+          let stepClass = styles.step;
+          if (status === "completed") {
+            stepClass += ` ${styles.completed}`;
+          } else if (status === "current") {
+            stepClass += ` ${styles.current}`;
+          } else {
+            stepClass += ` ${styles.upcoming}`;
+          }
+
+          return (
+            <React.Fragment key={step.id}>
+              <div className={stepClass}>
+                <div className={styles.iconWrapper}>
+                  {status === "completed" ? (
+                    <FaCheckCircle className={styles.icon} />
+                  ) : (
+                    <step.icon className={styles.icon} />
+                  )}
+                </div>
+                <div className={styles.label}>{step.label}</div>
               </div>
-              <div className={styles.label}>{step.label}</div>
-            </div>
-            {index < stepsConfig.length - 1 && (
-              <div className={styles.connector}></div>
-            )}
-          </React.Fragment>
-        );
-      })}
+              {index < stepsConfig.length - 1 && (
+                <div className={styles.connector}></div>
+              )}
+            </React.Fragment>
+          );
+        })}
+
+      <button
+        onClick={toggleExpansion}
+        className={styles.toggleButton}
+        title={isExpanded ? "Colapsar progreso" : "Expandir progreso"}
+        aria-expanded={isExpanded}
+      >
+        {isExpanded ? <FaCompressAlt /> : <FaExpandAlt />}
+      </button>
     </div>
   );
 };

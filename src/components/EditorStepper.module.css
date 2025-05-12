@@ -1,52 +1,135 @@
 .stepperContainer {
+  position: absolute;
+  top: 15px; /* Ajusta según prefieras */
+  right: 15px; /* Ajusta según prefieras */
+  background-color: var(--background-color-light, #fff);
+  border-radius: 25px; /* Más redondeado para un look de "píldora" */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
   display: flex;
-  align-items: flex-start; /* Alinea los items al inicio para que el texto no afecte la línea de iconos */
-  justify-content: space-around;
-  padding: 15px 10px;
-  background-color: var(
-    --background-color-secondary,
-    #f8f9fa
-  ); /* Usar variables CSS si las tienes */
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: 700px; /* O el ancho que prefieras */
-  margin-left: auto;
-  margin-right: auto;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  opacity: 0.6;
+}
+
+.stepperContainer:hover {
+  opacity: 1; /* Opacidad completa al pasar el mouse */
+}
+
+/* Estado Colapsado */
+.stepperContainer.collapsed {
+  padding: 6px 8px 6px 12px; /* top/bottom, right, left para acomodar el botón al final */
+}
+
+.stepperContainer.collapsed .step.currentCollapsedView .label {
+  font-size: 0.85em;
+  margin-left: 6px;
+  color: var(--text-color-secondary, #555);
+  max-width: 150px; /* Evita que sea demasiado largo */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stepperContainer.collapsed .step.currentCollapsedView .icon {
+  font-size: 1.1em;
+  color: var(--primary-color, #007bff);
+}
+
+/* Ocultar elementos no necesarios en modo colapsado */
+.stepperContainer.collapsed .step:not(.currentCollapsedView),
+.stepperContainer.collapsed .connector {
+  display: none;
+}
+
+/* Estado Expandido */
+.stepperContainer.expanded {
+  padding: 10px 15px;
+  flex-direction: row;
+  border-radius: 8px; /* Radio normal cuando está expandido */
 }
 
 .step {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  position: relative;
-  color: var(--text-color-secondary, #6c757d); /* Color para pasos futuros */
-  transition: color 0.3s ease;
+  padding: 4px 8px;
+  border-radius: 15px;
+  transition: background-color 0.2s ease;
 }
 
 .iconWrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--background-color, #e9ecef);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
-  border: 2px solid transparent;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .icon {
-  font-size: 18px;
+  font-size: 1em;
+}
+
+/* Colores de iconos y etiquetas según estado (en modo expandido) */
+.stepperContainer.expanded .label {
+  display: block;
+  margin-left: 8px;
+  font-size: 0.9em;
+  color: var(--text-color-primary, #333);
+  white-space: nowrap;
+}
+
+.stepperContainer.expanded .step.completed .icon,
+.stepperContainer.expanded .step.completed .label {
+  color: var(--primary-color, #007bff);
+}
+
+.stepperContainer.expanded .step.current .icon,
+.stepperContainer.expanded .step.current .label {
+  color: var(--primary-color-dark, #0056b3);
+}
+.stepperContainer.expanded .step.current .label {
+  font-weight: bold;
+}
+
+.stepperContainer.expanded .step.upcoming .icon,
+.stepperContainer.expanded .step.upcoming .label {
+  color: var(--text-color-disabled, #aaa);
+}
+
+.stepperContainer.expanded .step {
+  margin-right: 0; /* Los conectores darán el espacio */
+}
+
+.stepperContainer.expanded .connector {
+  display: flex; /* Mostrar conectores */
+}
+
+.toggleButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  margin-left: 8px; /* Espacio entre el contenido y el botón */
+  color: var(--text-color-secondary, #555);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem; /* Tamaño del icono del botón de toggle */
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.toggleButton:hover {
+  color: var(--text-color-primary, #000);
+  background-color: var(--background-color-hover-light, #f0f0f0);
+}
+
+/* Estilos para el paso actual cuando está colapsado (vista única) */
+.step.currentCollapsedView {
+  display: flex;
+  align-items: center;
 }
 
 .label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  max-width: 100px; /* Evita que etiquetas largas rompan el layout */
+  /* Estilos base de la etiqueta, ajustados arriba para expandido/colapsado */
 }
 
 /* Estado Completado */
@@ -76,11 +159,12 @@
 
 /* Conector entre pasos */
 .connector {
-  flex-grow: 1;
   height: 2px;
-  background-color: var(--border-color, #dee2e6);
-  margin: 20px 5px 0 5px; /* Alinear con el centro de los iconos */
-  min-width: 30px;
+  width: 25px;
+  background-color: var(--border-color-light, #e0e0e0);
+  margin: 0 8px;
+  align-self: center;
+  border-radius: 1px;
 }
 
 /* Si quieres que el conector cambie de color cuando el paso anterior está completo */
