@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { HiveAccountSuggestions } from "../components/HiveAccountSuggestions";
 import { loginWithHive } from "../keychain/loginWithHive";
 import { useErrorStore } from "../stores/errorStore";
+import styles from "../styles/LoginPage.module.css";
 import { AppError, createAppError } from "../types/error";
 
 export function Login() {
@@ -54,20 +55,41 @@ export function Login() {
   };
 
   return (
-    <div>
-      <h1>Iniciar sesión con Hive</h1>{" "}
-      <input
-        ref={inputRef}
-        placeholder="Tu usuario Hive"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <button onClick={handleLogin}>Iniciar sesión</button>
-      <HiveAccountSuggestions
-        text={username}
-        anchorRef={inputRef as React.RefObject<HTMLElement>}
-        onSelect={handleSelect}
-      />
+    <div className={styles.loginPageContainer}>
+      <div className={styles.loginFormContainer}>
+        <img
+          src="/src/assets/logos/aegispad256.png"
+          alt="Aegispad Logo"
+          className={styles.logo}
+        />
+        <h1 className={styles.loginTitle}>Bienvenido a Aegispad</h1>
+        <p className={styles.loginSubtitle}>
+          Inicia sesión con tu cuenta de Hive
+        </p>
+        <div className={styles.inputGroup}>
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Tu usuario Hive"
+            value={username}
+            onChange={(e) => setUsername(e.target.value.toLowerCase())} // Convertir a minúsculas
+            className={styles.loginInput}
+            aria-label="Nombre de usuario de Hive"
+          />
+          <HiveAccountSuggestions
+            text={username}
+            anchorRef={inputRef as React.RefObject<HTMLElement>}
+            onSelect={handleSelect}
+          />
+        </div>
+        <button onClick={handleLogin} className={styles.loginButton}>
+          Iniciar sesión con Keychain
+        </button>
+        <p className={styles.loginBenefits}>
+          Redacta en Markdown, traduce al instante y publica directo en HIVE.
+          ¡Todo sin salir de Aegispad!
+        </p>
+      </div>
     </div>
   );
 }
