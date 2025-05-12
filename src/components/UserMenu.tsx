@@ -1,11 +1,12 @@
 // src/components/UserMenu.tsx
 
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout as logoutService } from "../services/authService"; // Import the logout service function
 import { useAuthStore } from "../stores/authStore";
 import { useErrorStore } from "../stores/errorStore";
 // Import AppError as a class
+import { useArticleStore } from "../stores/articleStore";
 import styles from "../styles/UserMenu.module.css";
 import { AppError, createAppError } from "../types/error";
 
@@ -13,7 +14,9 @@ export function UserMenu() {
   const { username, refreshToken, logout: storeLogout } = useAuthStore(); // Get username, refreshToken, and the logout action from the store
   const { setError } = useErrorStore(); // Get the action to set errors
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null); // Reference to detect clicks outside
+  const menuRef = useRef<HTMLDivElement>(null);
+  const { resetArticleState } = useArticleStore();
+  const navigate = useNavigate();
 
   // Close the menu if clicked outside of it
   useEffect(() => {
@@ -42,15 +45,14 @@ export function UserMenu() {
           true
         )
       );
-      storeLogout(); // Clear the store locally just in case
+      storeLogout();
       return;
     }
 
     try {
       await logoutService(refreshToken); // Call the backend logout service
       storeLogout(); // Clear the authentication state in the Zustand store
-      // Optional: Redirect the user to the home or login page
-      // navigate('/'); // If using useNavigate here, UserMenu would need to be a hook or receive navigate via prop
+      resetArticleState();
       console.log("Sesión cerrada exitosa");
     } catch (err: any) {
       console.error("Error durante el logout:", err);
@@ -84,6 +86,8 @@ export function UserMenu() {
       }
     } finally {
       setIsMenuOpen(false); // Close the menu after attempting logout
+      navigate("/ogin"); // Redirige a la página de inicio o login
+      window.location.reload();
     }
   };
 
