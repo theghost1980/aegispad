@@ -1,6 +1,5 @@
 import React from "react";
 import EditorStepper from "../components/EditorStepper";
-import FormatSelector from "../components/FormatSelector";
 import { MarkdownEditorWithTranslation } from "../components/MarkdownEditorWithTranslation";
 import { useArticleStore } from "../stores/articleStore";
 import styles from "../styles/EditorPage.module.css";
@@ -29,7 +28,6 @@ const EditorPage: React.FC = () => {
       {currentEditorStep === "WRITING_TRANSLATING" && (
         <MarkdownEditorWithTranslation />
       )}
-      {currentEditorStep === "SELECTING_FORMAT" && <FormatSelector />}
     </div>
   );
 };

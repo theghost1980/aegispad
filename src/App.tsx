@@ -5,6 +5,7 @@ import OperationLoader from "./components/OperationLoader"; // Importar el nuevo
 import PrivateRoute from "./components/PrivateRoute";
 import SuccessNotification from "./components/SuccessNotification";
 import EditorPage from "./pages/Editor";
+import FormatSelectionPage from "./pages/FormatSelectionPage";
 import HomePage from "./pages/Home";
 import { Login } from "./pages/Login";
 import ProfilePage from "./pages/Profile";
@@ -41,6 +42,14 @@ function App() {
             element={
               <PrivateRoute>
                 <EditorPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/editor/format"
+            element={
+              <PrivateRoute>
+                <FormatSelectionPage />
               </PrivateRoute>
             }
           />

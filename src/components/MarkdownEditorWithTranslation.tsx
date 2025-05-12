@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { FaChevronLeft, FaChevronRight, FaCog } from "react-icons/fa";
 import { IoLanguage } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Importar useNavigate
 import { translateText } from "../services/translationService";
 import { useArticleStore } from "../stores/articleStore";
 import { useErrorStore } from "../stores/errorStore";
@@ -35,6 +35,7 @@ export function MarkdownEditorWithTranslation() {
   const [debounceProgress, setDebounceProgress] = useState(0);
   const { setError, clearError } = useErrorStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate(); // Hook para la navegación
 
   const [isTranslationPaneVisible, setIsTranslationPaneVisible] =
     useState(true);
@@ -489,9 +490,11 @@ export function MarkdownEditorWithTranslation() {
 
   const handleContinueToFormatSelection = () => {
     if (markdownText !== storeOriginalMarkdown) {
+      // Asegurarse de que el markdown más reciente esté en el store
       setOriginalMarkdown(markdownText);
     }
     setCurrentEditorStep("SELECTING_FORMAT");
+    navigate("/editor/format"); // Navegar a la nueva página
   };
 
   const handleConfirmTranslation = () => {

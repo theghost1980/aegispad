@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { FaChevronRight } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useArticleStore, type FormatOption } from "../stores/articleStore";
 import styles from "../styles/FormatSelector.module.css";
 import { MarkdownPreview } from "./MarkdownPreview";
@@ -33,9 +33,18 @@ const FormatSelector: React.FC = () => {
     navigate("/editor/review"); // Navegar a la nueva página de revisión
   };
 
+  const handleGoBackToEditor = () => {
+    setCurrentEditorStep("WRITING_TRANSLATING");
+    navigate("/editor"); // Navegar de vuelta a la página principal del editor
+  };
+
   if (!originalMarkdown && !translatedMarkdown) {
-    // Podríamos redirigir o mostrar un mensaje si no hay contenido
-    return <p>No hay contenido para formatear. Por favor, vuelve al editor.</p>;
+    return (
+      <p>
+        No hay contenido para formatear. Por favor,{" "}
+        <Link to="/editor">vuelve al editor</Link>.
+      </p>
+    );
   }
 
   return (
@@ -87,7 +96,7 @@ const FormatSelector: React.FC = () => {
 
       <div className={styles.navigationButtons}>
         <button
-          onClick={() => setCurrentEditorStep("WRITING_TRANSLATING")}
+          onClick={handleGoBackToEditor}
           className={`${styles.navButton} ${styles.backButton}`}
         >
           Volver al Editor
