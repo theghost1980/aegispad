@@ -4,7 +4,8 @@ export type ErrorType =
   | "validation"
   | "keychain"
   | "general"
-  | "configuration";
+  | "configuration"
+  | "traduccion";
 
 /**
  * Custom Error class for application-specific errors.

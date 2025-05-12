@@ -1,3 +1,4 @@
+import type { Root, Text } from "mdast";
 import React, {
   useCallback,
   useEffect,
@@ -5,10 +6,15 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { FaChevronLeft, FaChevronRight, FaCog } from "react-icons/fa";
+import { IoLanguage } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { translateText } from "../services/translationService";
+import { useArticleStore } from "../stores/articleStore";
 import { useErrorStore } from "../stores/errorStore";
+import { useOperationLoadingStore } from "../stores/operationLoadingStore";
 import { useSettingsStore } from "../stores/settingsStore";
+import { useSuccessNotificationStore } from "../stores/successNotificationStore";
 import styles from "../styles/MarkdownEditorWithTranslation.module.css";
 import { AppError, createAppError } from "../types/error";
 import { debounce } from "../utils/debounce";
@@ -16,18 +22,11 @@ import {
   cleanMarkdownForTranslation,
   reinsertMarkdownElements,
 } from "../utils/markdownCleaner";
-import { MarkdownPreview } from "./MarkdownPreview";
-import { MarkdownToolbar } from "./MarkdownToolbar";
-// Importa el tipo Root y Node
-import type { Root, Text } from "mdast"; // Importa Root y Text desde mdast
-import { FaChevronLeft, FaChevronRight, FaCog } from "react-icons/fa";
-import { MdTranslate } from "react-icons/md";
-import { useArticleStore } from "../stores/articleStore";
-import { useOperationLoadingStore } from "../stores/operationLoadingStore";
-import { useSuccessNotificationStore } from "../stores/successNotificationStore";
 import { OperationTimer } from "../utils/timeTracker";
 import { countWords } from "../utils/wordCount";
 import { ConfirmTranslationModal } from "./ConfirmTranslationModal";
+import { MarkdownPreview } from "./MarkdownPreview";
+import { MarkdownToolbar } from "./MarkdownToolbar";
 
 export function MarkdownEditorWithTranslation() {
   const [markdownText, setMarkdownText] = useState("");
@@ -47,7 +46,7 @@ export function MarkdownEditorWithTranslation() {
     showLoader,
     hideLoader,
     isLoading: isOperationLoading,
-  } = useOperationLoadingStore(); // Volver a obtener isLoading
+  } = useOperationLoadingStore();
 
   const wordCount = useMemo(() => countWords(markdownText), [markdownText]);
 
@@ -58,21 +57,10 @@ export function MarkdownEditorWithTranslation() {
     setTranslatedMarkdown,
     setCurrentEditorStep,
     originalMarkdown: storeOriginalMarkdown,
-    translatedMarkdown: storeTranslatedMarkdown, // Para saber si ya hay una traducción
+    translatedMarkdown: storeTranslatedMarkdown,
   } = useArticleStore();
 
-  /**
-   * ms = millisecons
-   */
   const DEBOUNCE_DELAY = 500;
-
-  // Inicializar markdownText desde el store si existe (por persistencia)
-  // useEffect(() => {
-  //   if (storeOriginalMarkdown && !markdownText) {
-  //     // Solo si markdownText está vacío
-  //     setMarkdownText(storeOriginalMarkdown);
-  //   }
-  // }, [storeOriginalMarkdown, markdownText]);
 
   const debouncedTranslate = useCallback(
     debounce(
@@ -83,11 +71,6 @@ export function MarkdownEditorWithTranslation() {
           !preferredTargetLanguage
         ) {
           setTranslatedText("");
-          // Si el loader global estaba activo por esta operación, ocultarlo
-          // Leemos el estado actual del loader directamente para evitar dependencias innecesarias
-          // if (useOperationLoadingStore.getState().isLoading) {
-          //   hideLoader();
-          // }
           if (!preferredSourceLanguage || !preferredTargetLanguage) {
             console.warn("Translation languages not set in settings.");
           }
@@ -102,9 +85,9 @@ export function MarkdownEditorWithTranslation() {
         let finalTranslation = "";
         try {
           const {
-            tree: originalTree, // Renombrado para claridad
+            tree: originalTree,
             textFragments,
-            tableAlignments: originalTableAlignments, // Obtener las alineaciones
+            tableAlignments: originalTableAlignments,
           } = cleanMarkdownForTranslation(markdownText);
 
           extractedFragments = textFragments;
@@ -134,81 +117,78 @@ export function MarkdownEditorWithTranslation() {
             translatedTexts
           );
 
-          // reinsertMarkdownElements espera Root como primer argumento
           if (
             originalTree &&
             extractedFragments.length === translatedTexts.length
           ) {
             const finalTranslatedMarkdown = reinsertMarkdownElements(
               originalTree,
-              originalTableAlignments, // Pasar las alineaciones
+              originalTableAlignments,
               translatedTexts,
               textFragments
             );
             finalTranslation = finalTranslatedMarkdown;
             setTranslatedText(finalTranslatedMarkdown);
+            // Solo si la traducción y reinserción son exitosas, actualizamos el store y notificamos
+            setOriginalMarkdown(markdownText);
+            setTranslatedMarkdown(finalTranslatedMarkdown);
+            const duration = translationTimer.stop();
+            if (duration !== null) {
+              const formattedTime = translationTimer.getFormattedDuration();
+              showSuccess(`Traducción realizada en ${formattedTime}.`);
+              console.log(`La operación de traducción tardó: ${formattedTime}`);
+            }
             console.log(
               "DEBUG EDITOR: translatedText state updated with:",
               finalTranslatedMarkdown
             );
           } else {
+            translationTimer.stop();
             console.error(
               "DEBUG EDITOR: Inconsistencia entre fragmentos extraídos y traducidos.",
               {
                 extractedCount: extractedFragments.length,
                 translatedCount: translatedTexts.length,
                 translatedTexts,
+                translatedTextsArray: translatedTexts,
               }
             );
-            setTranslatedText(
-              "Error en el proceso de traducción: El servicio devolvió un número inesperado de fragmentos."
+            const errorMsg =
+              "Error: El servicio de traducción devolvió una estructura inesperada.";
+            setError(
+              createAppError(
+                errorMsg,
+                "Inconsistent fragment count from translation service.",
+                undefined,
+                "traduccion",
+                true,
+                true
+              )
             );
+            setTranslatedText(errorMsg); // Mostrar error en la preview
+            setTranslatedMarkdown(""); // Limpiar traducción en el store
           }
         } catch (err: any) {
+          translationTimer.stop();
           console.error("Error during translation process:", err);
-          if (err instanceof AppError) {
-            setError(err);
-          } else if (err instanceof Error) {
-            setError(
-              createAppError(
-                `Error en el proceso de traducción: ${err.message}`,
-                err.stack || err.message,
-                undefined,
-                "general",
-                true,
-                true,
-                err
-              )
-            );
-          } else {
-            setError(
-              createAppError(
-                "Ocurrió un error inesperado en el proceso de traducción.",
-                JSON.stringify(err),
-                undefined,
-                "general",
-                true,
-                true,
-                err
-              )
-            );
-          }
-          setTranslatedText("Error en el proceso de traducción.");
+          const detailedError =
+            err instanceof AppError
+              ? err
+              : createAppError(
+                  `Error en el proceso de traducción: ${
+                    err.message || "Error desconocido"
+                  }`,
+                  err.stack || JSON.stringify(err),
+                  undefined,
+                  "traduccion",
+                  true,
+                  true,
+                  err
+                );
+          setError(detailedError);
+          setTranslatedText(`Error al traducir: ${detailedError.message}`);
+          setTranslatedMarkdown("");
         } finally {
-          const duration = translationTimer.stop();
-          // Aquí usamos el nuevo método para obtener el tiempo formateado
-          if (duration !== null) {
-            const formattedTime = translationTimer.getFormattedDuration();
-            console.log(`La operación de traducción tardó: ${formattedTime}`);
-            showSuccess(`Traducción realizada en ${formattedTime}.`);
-
-            // Guardar en el store, PERO NO cambiar de paso automáticamente
-            setOriginalMarkdown(markdownText); // El markdownText actual en el editor
-            // Asegurarse de que finalTranslation tenga un valor antes de usarlo
-            if (finalTranslation) {
-              setTranslatedMarkdown(finalTranslation);
-            }
-          }
           hideLoader();
           setDebounceProgress(0);
         }
@@ -219,53 +199,24 @@ export function MarkdownEditorWithTranslation() {
       }
     ),
     [
+      markdownText,
       setError,
       clearError,
       preferredSourceLanguage,
       preferredTargetLanguage,
       showLoader,
       hideLoader,
-      setOriginalMarkdown, // Añadir como dependencia
-      setTranslatedMarkdown, // Añadir como dependencia
+      setOriginalMarkdown,
+      setTranslatedMarkdown,
+      showSuccess,
     ]
   );
 
   useEffect(() => {
-    // if (
-    //   isTranslationEnabled &&
-    //   preferredSourceLanguage &&
-    //   preferredTargetLanguage
-    // ) {
-    //   if (!markdownText.trim()) {
-    //     setTranslatedText("");
-    //     debouncedTranslate.cancel();
-    //     setDebounceProgress(0);
-    //     // No llamar a hideLoader aquí, porque no se llamó a showLoader
-    //     return;
-    //   }
-    //   debouncedTranslate(markdownText);
-    // } else {
-    //   setTranslatedText("");
-    //   if (useOperationLoadingStore.getState().isLoading) {
-    //     hideLoader();
-    //   }
-    //   debouncedTranslate.cancel();
-    //   setDebounceProgress(0);
-    // }
     return () => {
       debouncedTranslate.cancel();
-      // El hideLoader en el finally de debouncedTranslate o en la lógica de arriba
-      // debería ser suficiente. Si el componente se desmonta mientras el debounce está
-      // activo pero antes de que se ejecute el callback, la cancelación es lo importante.
-      // Si se desmonta DURANTE la traducción (después de showLoader), el finally lo manejará.
     };
-  }, [
-    // markdownText,
-    // isTranslationEnabled,
-    // preferredSourceLanguage, // Asegurar que esté como dependencia
-    // preferredTargetLanguage,
-    debouncedTranslate,
-  ]);
+  }, [debouncedTranslate]);
 
   const handleMarkdownChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -277,36 +228,7 @@ export function MarkdownEditorWithTranslation() {
     );
   };
 
-  // const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const isChecked = event.target.checked;
-  //   setIsTranslationEnabled(isChecked);
-  //   console.log("DEBUG EDITOR: Translation toggle changed to:", isChecked);
-
-  //   if (!isChecked) {
-  //     setTranslatedText("");
-  //     if (useOperationLoadingStore.getState().isLoading) {
-  //       hideLoader();
-  //     }
-  //     debouncedTranslate.cancel();
-  //     setDebounceProgress(0);
-  //   }
-  // };
-
-  // Helper para aplicar formato y manejar el cursor/selección
-
   const handleTranslateButtonClick = () => {
-    // if (translatedText) {
-    //   // Si ya hay texto traducido, el botón funciona para limpiar
-    //   setTranslatedText("");
-    //   // setTranslatedMarkdown(""); // Limpiar también en el store
-    //   if (useOperationLoadingStore.getState().isLoading) {
-    //     hideLoader();
-    //   }
-    //   debouncedTranslate.cancel();
-    //   setDebounceProgress(0);
-    //   showSuccess("Traducción limpiada.");
-    // } else {
-    // Si no hay texto traducido, muestra el modal de confirmación
     if (!markdownText.trim()) {
       setError(
         createAppError(
@@ -319,7 +241,6 @@ export function MarkdownEditorWithTranslation() {
       return;
     }
     setIsConfirmModalVisible(true);
-    // }
   };
 
   const applyFormat = (
@@ -360,8 +281,6 @@ export function MarkdownEditorWithTranslation() {
 
     setMarkdownText(newText);
 
-    // Devolvemos el foco y ajustamos la selección
-    // Usamos un pequeño timeout para asegurar que el estado se haya actualizado en el DOM
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(newStart, newEnd);
@@ -386,7 +305,7 @@ export function MarkdownEditorWithTranslation() {
     const linkText = selectedText || "texto del enlace";
     let url = window.prompt("Introduce la URL del enlace:", "https://");
 
-    if (url === null) return; // El usuario canceló
+    if (url === null) return;
     url = url.trim();
     if (!url) {
       alert("La URL no puede estar vacía.");
@@ -413,13 +332,11 @@ export function MarkdownEditorWithTranslation() {
     setTimeout(() => {
       textarea.focus();
       if (selectedText) {
-        // Si había texto seleccionado (que se usó como linkText), seleccionamos la URL
-        const selectionStart = start + linkText.length + 3; // Posición después de "[linkText](" para seleccionar la URL
-        const selectionEnd = selectionStart + url.length; // Posición al final de la URL
+        const selectionStart = start + linkText.length + 3;
+        const selectionEnd = selectionStart + url.length;
         textarea.setSelectionRange(selectionStart, selectionEnd);
       } else {
-        // Si no, seleccionamos el "texto del enlace"
-        const selectionStart = start + 1; // Posición después de "[" para seleccionar "texto del enlace"
+        const selectionStart = start + 1;
         const selectionEnd = selectionStart + linkText.length;
         textarea.setSelectionRange(selectionStart, selectionEnd);
       }
@@ -434,7 +351,7 @@ export function MarkdownEditorWithTranslation() {
     const selectedText = textarea.value.substring(start, end);
 
     let imageUrl = window.prompt("Introduce la URL de la imagen:", "https://");
-    if (imageUrl === null) return; // El usuario canceló
+    if (imageUrl === null) return;
     imageUrl = imageUrl.trim();
     if (!imageUrl) {
       alert("La URL de la imagen no puede estar vacía.");
@@ -447,7 +364,7 @@ export function MarkdownEditorWithTranslation() {
         "Introduce el texto alternativo para la imagen:",
         "texto alternativo"
       );
-    if (altText === null) return; // El usuario canceló el prompt de texto alternativo
+    if (altText === null) return;
 
     const markdownToInsert = `![${altText}](${imageUrl})`;
 
@@ -461,13 +378,11 @@ export function MarkdownEditorWithTranslation() {
     setTimeout(() => {
       textarea.focus();
       if (selectedText) {
-        // Si el texto alternativo vino de una selección, seleccionamos la URL de la imagen
-        const selectionStart = start + altText.length + 4; // Posición después de "![altText](" para seleccionar la URL
-        const selectionEnd = selectionStart + imageUrl.length; // Posición al final de la URL de la imagen
+        const selectionStart = start + altText.length + 4;
+        const selectionEnd = selectionStart + imageUrl.length;
         textarea.setSelectionRange(selectionStart, selectionEnd);
       } else {
-        // Si el texto alternativo fue ingresado o es placeholder, lo seleccionamos
-        const selectionStart = start + 2; // Posición después de "![" para seleccionar "altText"
+        const selectionStart = start + 2;
         const selectionEnd = selectionStart + altText.length;
         textarea.setSelectionRange(selectionStart, selectionEnd);
       }
@@ -488,28 +403,25 @@ export function MarkdownEditorWithTranslation() {
 
     if (selectedText) {
       if (selectedText.includes("\n")) {
-        // Bloque de código multilínea
         newText =
           textarea.value.substring(0, start) +
           "```\n" +
           selectedText +
           "\n```" +
           textarea.value.substring(end);
-        newStart = start + 4; // Después de "```\n"
+        newStart = start + 4;
         newEnd = newStart + selectedText.length;
       } else {
-        // Código en línea (inline code)
         newText =
           textarea.value.substring(0, start) +
           "`" +
           selectedText +
           "`" +
           textarea.value.substring(end);
-        newStart = start + 1; // Después de "`"
+        newStart = start + 1;
         newEnd = newStart + selectedText.length;
       }
     } else {
-      // Insertar un bloque de código multilínea de ejemplo
       const placeholder = "código aquí";
       newText =
         textarea.value.substring(0, start) +
@@ -517,7 +429,7 @@ export function MarkdownEditorWithTranslation() {
         placeholder +
         "\n```" +
         textarea.value.substring(end);
-      newStart = start + 4; // Después de "```\n"
+      newStart = start + 4;
       newEnd = newStart + placeholder.length;
     }
 
@@ -540,12 +452,10 @@ export function MarkdownEditorWithTranslation() {
     const summaryPlaceholder = "Título del detalle";
     let detailsContent = selectedText || "Contenido aquí...";
 
-    // Si el texto seleccionado es multilínea, añadir saltos de línea alrededor.
-    // Si no, asumimos que es una sola línea o un placeholder.
     if (selectedText && selectedText.includes("\n")) {
       detailsContent = `\n${selectedText}\n`;
     } else if (selectedText) {
-      detailsContent = `\n${selectedText}\n`; // Incluso si es una línea, darle su propio espacio.
+      detailsContent = `\n${selectedText}\n`;
     } else {
       detailsContent = `\n${detailsContent}\n`;
     }
@@ -559,7 +469,6 @@ export function MarkdownEditorWithTranslation() {
 
     setMarkdownText(newText);
 
-    // Seleccionar el placeholder del summary para fácil edición
     const summaryStart = start + "<details>\n<summary>".length;
     const summaryEnd = summaryStart + summaryPlaceholder.length;
 
@@ -579,13 +488,9 @@ export function MarkdownEditorWithTranslation() {
   };
 
   const handleContinueToFormatSelection = () => {
-    // Antes de continuar, asegurarse de que el original actual esté en el store
-    // Esto es por si el usuario editó el original DESPUÉS de la última traducción.
     if (markdownText !== storeOriginalMarkdown) {
       setOriginalMarkdown(markdownText);
     }
-    // El translatedMarkdown ya debería estar en el store por la última traducción exitosa.
-    // Si no hay translatedMarkdown, el botón no debería estar visible/habilitado.
     setCurrentEditorStep("SELECTING_FORMAT");
   };
 
@@ -616,7 +521,6 @@ export function MarkdownEditorWithTranslation() {
   };
 
   const handleHelpModal = () => {
-    // window.open("/ayuda#traduccion", "_blank"); // Placeholder URL
     alert("//TODO in future FAQ section!");
   };
 
@@ -646,11 +550,9 @@ export function MarkdownEditorWithTranslation() {
             className={styles.translateButton}
             title={"Traducir"}
           >
-            <MdTranslate style={{ marginRight: "8px" }} />
+            <IoLanguage style={{ marginRight: "8px" }} />
           </button>
         </div>
-        {/* El DebounceProgress se mostrará si debouncedTranslate está activo (esperando el delay) */}
-        {/* o si la traducción está en curso (isOperationLoading es true) y aún no hay translatedText */}
         {(debounceProgress > 0 || isOperationLoading) && !translatedText && (
           <div className={styles.debounceProgressBarContainer}>
             <div
@@ -666,13 +568,12 @@ export function MarkdownEditorWithTranslation() {
           onChange={handleMarkdownChange}
           placeholder="Escribe tu artículo en Markdown aquí..."
         />
-        {/* Botón para continuar al siguiente paso, visible si hay una traducción */}
         {storeTranslatedMarkdown && (
           <div className={styles.continueButtonContainer}>
             <button
               onClick={handleContinueToFormatSelection}
               className={styles.continueButton}
-              disabled={!storeTranslatedMarkdown.trim()} // Deshabilitar si la traducción está vacía
+              disabled={!storeTranslatedMarkdown.trim()}
               title="Continuar para seleccionar el formato de presentación"
             >
               Continuar a Selección de Formato
@@ -712,8 +613,6 @@ export function MarkdownEditorWithTranslation() {
                 La previsualización aparecerá aquí...
               </p>
             )}
-            {/* Mensaje si se intenta traducir sin idiomas configurados (ya manejado en el modal/botón) */}
-            {/* O si el loader está activo */}
             {isOperationLoading && !translatedText && (
               <p
                 style={{
@@ -729,7 +628,6 @@ export function MarkdownEditorWithTranslation() {
         </div>
       )}
 
-      {/* Botón flotante para mostrar/ocultar panel de traducción/previsualización */}
       <button
         className={styles.togglePaneButton}
         onClick={handleToggleTranslationPane}
