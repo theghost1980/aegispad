@@ -1,7 +1,7 @@
 .stepperContainer {
   position: absolute;
-  top: 15px; /* Ajusta según prefieras */
-  right: 15px; /* Ajusta según prefieras */
+  top: 15px;
+  left: 15px;
   background-color: var(--background-color-light, #fff);
   border-radius: 25px; /* Más redondeado para un look de "píldora" */
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);

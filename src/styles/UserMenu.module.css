@@ -36,6 +36,7 @@
   padding: 10px 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  color: #333;
 }
 
 .menuItem:hover {

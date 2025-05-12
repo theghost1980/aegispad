@@ -101,7 +101,7 @@ export const useArticleStore = create<ArticleState>()(
             combined = `${originalTitleMarkdown}${originalBody}\n\n---\n\n${translatedBody}`;
           } else if (selectedFormatOption === "details") {
             // Formato details: Títulos, luego Original, y la Traducción dentro de <details>
-            const summaryText = `Traducción <img src="https://files.peakd.com/file/peakd-hive/theghost1980/AKREjL6d1fMvN5UvkUDGL8Lc4RP2in8voDTZuwGcyRbFNUkSP2zQC8HZwnEd4kg.png" alt="mini logo" style="height: 1em; vertical-align: middle; margin-left: 5px;" />`; // Ajustado height
+            const summaryText = `Traducción <img src="https://files.peakd.com/file/peakd-hive/theghost1980/AKREjL6d1fMvN5UvkUDGL8Lc4RP2in8voDTZuwGcyRbFNUkSP2zQC8HZwnEd4kg.png" alt="mini logo" style="height: 3em; vertical-align: middle; margin-left: 5px;" />`; // Ajustado height
             // Título original y cuerpo original fuera. Título traducido y cuerpo traducido dentro de details.
             combined = `${originalTitleMarkdown}${originalBody}\n\n<details>\n<summary>${summaryText}</summary>\n\n${translatedTitleMarkdown}${translatedBody}\n</details>`;
           }

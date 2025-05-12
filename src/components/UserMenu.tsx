@@ -1,12 +1,9 @@
-// src/components/UserMenu.tsx
-
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logout as logoutService } from "../services/authService"; // Import the logout service function
+import { logout as logoutService } from "../services/authService";
+import { useArticleStore } from "../stores/articleStore";
 import { useAuthStore } from "../stores/authStore";
 import { useErrorStore } from "../stores/errorStore";
-// Import AppError as a class
-import { useArticleStore } from "../stores/articleStore";
 import styles from "../styles/UserMenu.module.css";
 import { AppError, createAppError } from "../types/error";
 
